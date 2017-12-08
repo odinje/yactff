@@ -1,0 +1,19 @@
+# Created by https://www.gitignore.io
+
+
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+
+
+### Django ###
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+
+.env
+db.sqlite3

@@ -1,0 +1,15 @@
+.form-signin {
+  max-width: 330px;
+  padding: 15px;
+  margin: 0 auto;
+}
+.form-signin-heading {
+  text-align: center
+}
+.navbar {
+  font-size: large;
+}
+
+.navbar-brand {
+  font-weight: bold;
+}

@@ -1,0 +1,10 @@
+{% extends "web/base.html" %}
+
+{% block content %}
+{% if type == "md" %}
+  {% load markdown %}
+  {{ body | markdown | safe }}
+{% else %}
+  {{ body | safe }}
+{% endif %}
+{% endblock %}
