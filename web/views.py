@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect
 from django.http import Http404, HttpResponse
 from django.contrib.auth.decorators import user_passes_test
-from web.utils import load_page
+from web.utils import load_page, get_or_none
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
-from .models import Page
+from .models import Page, Category
 from django.conf import settings
 import os
 
@@ -28,10 +28,7 @@ def signup(request):
 
 
 def pages(request, path):
-    try:
-        page = Page.objects.get(path=path)
-    except:
-        page = None
+    page = get_or_none(Page, path=path)
     
     if page:
         context = {"body": load_page(page.file.path),
@@ -40,7 +37,11 @@ def pages(request, path):
     else:
         raise Http404
 
-@user_passes_test(lambda u: u.is_superuser)
+def challenges(request):
+    categories = get_or_noen(Category) 
+    
+
+@user_passes_test(lambda u: u.is_superuser) #TODO: Maybe change to is_staff?
 def download_page_file(request, id, filename):
     filepath = settings.PAGE_DIR + filename 
     response = HttpResponse(load_page(filepath), "applicaion/text")
