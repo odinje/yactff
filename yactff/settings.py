@@ -26,7 +26,7 @@ LOGGING = {
     },
     'handlers': {
         'default': {
-            'level':'INFO',
+            'level':'DEBUG',
             'class':'logging.StreamHandler',
         },
     },
@@ -52,7 +52,7 @@ SECRET_KEY = '87k_d^98rd=b#h+c#%&+&+rjgq(+vmp31o12h67)1k@_#=f9ow'
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+INTERNAL_IPS = ["127.0.0.1"]
 
 # Application definition
 
@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'web.apps.WebConfig',
+    'debug_toolbar',
 #    'web',
 ]
 
@@ -75,6 +76,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'yactff.urls'
@@ -132,3 +134,6 @@ STATIC_URL = '/static/'
 
 LOGIN_REDIRECT_URL = 'index'
 CTF_NAME = "Capture Tha Flag"
+ALLOW_ANONYMOUS_CHALLANGE_VIEW = True
+ALLOW_ANONYMOUS_SCOREBOARD_VIEW = True
+

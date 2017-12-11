@@ -38,7 +38,17 @@ def pages(request, path):
         raise Http404
 
 def challenges(request):
-    categories = get_or_noen(Category) 
+    if request.user.is_authenticated:
+        team = get_or_none(Team)
+        # request solved challenges
+    elif settings.ALLOW_ANONYMOUS_CHALLANGE_VIEW:
+        solved_challanges = None
+        pass
+    else:
+        pass
+        # Need to login in  page, and explain reason.
+        categories = get_or_none(Category) 
+    
     
 
 @user_passes_test(lambda u: u.is_superuser) #TODO: Maybe change to is_staff?

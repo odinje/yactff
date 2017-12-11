@@ -1,10 +1,9 @@
 from django.contrib import admin
-from .models import Competition, Category, Challenge, Player, SolvedChallenge, Team, Page
+from .models import Category, Challenge, Player, SolvedChallenge, Team, Page
 from .forms import PageAdminForm
 
 
 
-admin.site.register(Competition)
 admin.site.register(Category)
 admin.site.register(Challenge)
 admin.site.register(Player)
