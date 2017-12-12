@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import user_passes_test
 from web.utils import load_page, get_or_none
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
-from .models import Page, Category
+from web.models import Page, Category, Challenge, Team, SolvedChallenges
 from django.conf import settings
 import os
 
@@ -37,18 +37,25 @@ def pages(request, path):
     else:
         raise Http404
 
+
 def challenges(request):
-    if request.user.is_authenticated:
-        team = get_or_none(Team)
-        # request solved challenges
-    elif settings.ALLOW_ANONYMOUS_CHALLANGE_VIEW:
-        solved_challanges = None
-        pass
+    user = request.user
+    if user.is_authenticated or settings.ALLOW_ANONYMOUS_CHALLANGE_VIEW:
+        team_solved = None
+        categories = Category.objects.all()
+        challenges = Challenge.objects.values("title", "category", "points",
+                                                                     "active")
+        if user.is_authenticated:
+            team = get_or_none(Team, user=user)
+            team_solved = SolvedChallenges.objects.values("challenge")
+        
+
+        return render(request, "web/challenges.html", {"challenges": challenges,
+                                                    "categories": categories,
+                                                    "solved": team_solved})
     else:
-        pass
-        # Need to login in  page, and explain reason.
-        categories = get_or_none(Category) 
-    
+        raise Http404 #TODO!
+            
     
 
 @user_passes_test(lambda u: u.is_superuser) #TODO: Maybe change to is_staff?

@@ -38,8 +38,8 @@ class Challenge(models.Model):
         return self.title
 
 
-class SolvedChallenge(models.Model):
-    team = models.ForeignKey("Team", on_delete=models.DO_NOTHING)
+class SolvedChallenge(models.Model): #Include which person who solved it?
+    team = models.ForeignKey("Team", on_delete=models.DO_NOTHING) 
     challenge = models.ForeignKey("Challenge", on_delete=models.DO_NOTHING)
     completed = models.DateTimeField(auto_now_add=True)
 

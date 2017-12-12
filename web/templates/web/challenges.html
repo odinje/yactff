@@ -1,0 +1,16 @@
+{% extends "web/base.html" %}
+
+{% block content %}
+<div class="row">
+{% for category in categories %}
+  <div class="col-6-sm">
+      <h2>{{category.name}}</h2>
+      {% for challenge in challenges %}
+        {% if challenge.active and category.id == challenge.category %}
+        <button type="button" class="btn btn-dark">{{challenge.title}} - {{challenge.points}}</button>
+  {% endif %}
+  {% endfor %}
+  </div>
+{% endfor %}
+</div><!--/row-->
+{% endblock %}
