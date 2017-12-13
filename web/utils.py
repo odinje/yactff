@@ -1,5 +1,6 @@
 import logging
 from django.core.exceptions import ObjectDoesNotExist
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -18,3 +19,9 @@ def get_or_none(classmodel, **kwargs):
         return classmodel.objects.get(**kwargs)
     except ObjectDoesNotExist:
         return None
+
+def allow_view(user):
+    if user.is_authenticated or settings.ALLOW_ANONYMOUS_CHALLANGE_VIEW:
+        return True
+    else:
+        return False

@@ -24,7 +24,7 @@ class Category(models.Model):
     description = models.TextField(blank=True)
 
 
-class Challenge(models.Model):
+class Challenge(models.Model): # Maybe change title -> name
     #contest = models.ForeignKey("Competition", on_delete=models.DO_NOTHING)
     title = models.CharField(max_length=200, unique=True)
     category = models.ForeignKey("Category", on_delete=models.DO_NOTHING)

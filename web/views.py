@@ -1,12 +1,14 @@
 from django.shortcuts import render, redirect
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, JsonResponse
 from django.contrib.auth.decorators import user_passes_test
-from web.utils import load_page, get_or_none
+from web.utils import load_page, get_or_none, allow_view
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
-from web.models import Page, Category, Challenge, Team, SolvedChallenges
+from web.models import Page, Category, Challenge, Team, SolvedChallenge
 from django.conf import settings
 import os
+
+
 
 def index(request):
     context = {'body': load_page(settings.PAGE_DIR + "index.md"), "type": "md"}
@@ -40,23 +42,33 @@ def pages(request, path):
 
 def challenges(request):
     user = request.user
-    if user.is_authenticated or settings.ALLOW_ANONYMOUS_CHALLANGE_VIEW:
-        team_solved = None
+    if allow_view(user):
         categories = Category.objects.all()
-        challenges = Challenge.objects.values("title", "category", "points",
+        challenges = Challenge.objects.values("id","title", "category", "points",
                                                                      "active")
         if user.is_authenticated:
-            team = get_or_none(Team, user=user)
-            team_solved = SolvedChallenges.objects.values("challenge")
+            team = get_or_none(Team, player=user.id)
+            team_solved = SolvedChallenge.objects.values("challenge").filter(team=team)
+            for solved in team_solved:
+                for challenge in challenges:
+                    if solved["challenge"] == challenge["id"]:
+                        challenge["solved"] = True
+
         
 
         return render(request, "web/challenges.html", {"challenges": challenges,
-                                                    "categories": categories,
-                                                    "solved": team_solved})
+                                                    "categories": categories,})
     else:
         raise Http404 #TODO!
             
-    
+
+def challenge(request, id):
+    user = request.user
+    if allow_view(user):
+        challenge = Challenge.objects.select_related("category").values("title", "description").get(id=id)
+        return JsonResponse(challenge)
+    else:
+        raise Http404
 
 @user_passes_test(lambda u: u.is_superuser) #TODO: Maybe change to is_staff?
 def download_page_file(request, id, filename):

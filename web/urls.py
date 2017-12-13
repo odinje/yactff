@@ -6,6 +6,7 @@ from . import views
 urlpatterns = [
     path("", views.index, name="index"),
     path("challenges/", views.challenges, name="challenges"),
+    path("challenge/<int:id>", views.challenge, name="challenge"),
     re_path(r"^page/(?P<path>\w+)/$", views.pages, name="pages"),
     url(r'^login/$', auth_views.login, {"template_name": "web/login.html"}, name='login'),
     url(r'^signup/$', views.signup, name='signup'),
