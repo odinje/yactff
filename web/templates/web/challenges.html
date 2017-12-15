@@ -1,13 +1,12 @@
 {% extends "web/base.html" %}
 
 {% block content %}
-<div class="row">
 {% for category in categories %}
-  <div class="col-6-sm">
       <h2>{{category.name}}</h2>
+<div class="row mb-3">
       {% for challenge in challenges %}
         {% if challenge.active and category.id == challenge.category %}
-        <a role="button" class="btn {{challenge.solved|yesno:"btn-success,btn-light"}}" href="{% url "challenge" challenge.id%}">{{challenge.title}} - {{challenge.points}}</a>
+        <a role="button" class="btn col {{challenge.solved|yesno:"btn-success,btn-light"}}" href="{% url "challenge" challenge.id%}">{{challenge.title}} - {{challenge.points}}</a>
   {% endif %}
   {% endfor %}
   </div>
