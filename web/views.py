@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import user_passes_test
 from web.utils import load_page, get_or_none, allow_view
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.decorators import login_required
 from web.models import Page, Category, Challenge, Team, SolvedChallenge
 from django.conf import settings
 import os
@@ -40,35 +41,30 @@ def pages(request, path):
         raise Http404
 
 
+@login_required
 def challenges(request):
-    user = request.user
-    if allow_view(user):
-        categories = Category.objects.all()
-        challenges = Challenge.objects.values("id","title", "category", "points",
+    categories = Category.objects.all()
+    challenges = Challenge.objects.values("id","title", "category", "points",
                                                                      "active")
-        if user.is_authenticated:
-            team = get_or_none(Team, player=user.id)
-            team_solved = SolvedChallenge.objects.values("challenge").filter(team=team)
-            for solved in team_solved:
-                for challenge in challenges:
-                    if solved["challenge"] == challenge["id"]:
-                        challenge["solved"] = True
+    team = get_or_none(Team, player=request.user.id)
+    team_solved = SolvedChallenge.objects.values("challenge").filter(team=team)
+    for solved in team_solved:
+        for challenge in challenges:
+            if solved["challenge"] == challenge["id"]:
+                challenge["solved"] = True
 
         
 
-        return render(request, "web/challenges.html", {"challenges": challenges,
-                                                    "categories": categories,})
-    else:
-        raise Http404 #TODO!
-            
+    return render(request, "web/challenges.html", {"challenges": challenges,
+                                                   "categories": categories})
 
+
+@login_required
 def challenge(request, id):
-    user = request.user
-    if allow_view(user):
-        challenge = Challenge.objects.select_related("category").values("title", "description").get(id=id)
-        return JsonResponse(challenge)
-    else:
-        raise Http404
+    challenge = Challenge.objects.select_related("category").values("title",
+        "description", "points", "category__name").get(id=id)
+    
+    return render(request, "web/challenge.html", {"challenge": challenge})
 
 @user_passes_test(lambda u: u.is_superuser) #TODO: Maybe change to is_staff?
 def download_page_file(request, id, filename):
