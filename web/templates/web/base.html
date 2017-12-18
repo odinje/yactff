@@ -28,12 +28,18 @@
         {% endfor %}
       </ul>
     <ul class="nav navbar-nav ml-auto">
+      {% if user.is_authenticated %}
+      <li class="nav-item"><a class="nav-link" href="/user/profile">{{user.username}}</a></li>
+      {% else %}
       <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
+      {% endif %}
     </ul>
    </div>
   </nav>
 
- 
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+  Activate account
+</div> 
   <div class="container mt-5">
     {% block content %}{% endblock %}
   </div>

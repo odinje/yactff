@@ -10,11 +10,14 @@
     <p class="card-text">{{challenge.description}}<p>
   </div>
   <div class="card-body">
+    <form method="post">
+      {% csrf_token %}
     <div class="input-group">
-    <input type="text" class="form-control" placeholder="flag{...}" aria-label="flag"> <!--Add possiblity to dynamic flag format, maybe in settings.py-->
+    <input type="text" class="form-control" placeholder="flag{...}" aria-label="flag" name="flag"> <!--Add possiblity to dynamic flag format, maybe in settings.py-->
     <span class="input-group-btn">
-    <button class="btn btn-secondary" type="button">Submit!</button>
+    <button class="btn btn-secondary" type="submit">Submit!</button>
     </span>
+    </form>
   </div>
 </div>
 {% endblock %}

@@ -37,6 +37,12 @@ class Challenge(models.Model): # Maybe change title -> name
     def _str_(self):
         return self.title
 
+    def is_flag(self, flag):
+        if self.key == flag: # Maybe update key => flag
+            return True
+        return False
+
+
 
 class SolvedChallenge(models.Model): #Include which person who solved it?
     team = models.ForeignKey("Team", on_delete=models.DO_NOTHING) 
@@ -48,8 +54,7 @@ class SolvedChallenge(models.Model): #Include which person who solved it?
 class Team(models.Model):
     name = models.CharField(max_length=200, unique=True)
     logo = models.ImageField(upload_to="team/logo/", max_length=255, blank=True) 
-    #solved_challenges = models.ManyToManyField("Challenge",
-    #        through="SolvedChallenge")
+
 
 
 class Player(models.Model):

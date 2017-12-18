@@ -61,10 +61,23 @@ def challenges(request):
 
 @login_required
 def challenge(request, id):
-    challenge = Challenge.objects.select_related("category").values("title",
-        "description", "points", "category__name").get(id=id)
+    challenge = Challenge.objects.select_related("category").get(id=id)
+    team = get_or_none(Team, player=request.user.id)
+
+    if request.method == "POST":
+        if "flag" in request.POST:
+            flag = request.POST["flag"]
+            if challenge.is_flag(flag):
+                solved = SolvedChallenge(team=team, challenge=challenge)
+                solved.save()
+
     
     return render(request, "web/challenge.html", {"challenge": challenge})
+
+
+@login_required
+def user_profile(request):
+    return render(request, "web/profile.html")
 
 @user_passes_test(lambda u: u.is_superuser) #TODO: Maybe change to is_staff?
 def download_page_file(request, id, filename):
