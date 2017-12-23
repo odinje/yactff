@@ -13,7 +13,7 @@
     <form method="post">
       {% csrf_token %}
     <div class="input-group">
-    <input type="text" class="form-control" placeholder="flag{...}" aria-label="flag" name="flag"> <!--Add possiblity to dynamic flag format, maybe in settings.py-->
+      <input type="text" class="form-control" placeholder="flag{...}" aria-label="flag" name="flag" {% if challenge.is_solved %} disabled {% endif %}> <!--Add possiblity to dynamic flag format, maybe in settings.py-->
     <span class="input-group-btn">
     <button class="btn btn-secondary" type="submit">Submit!</button>
     </span>

@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import Http404, HttpResponse, JsonResponse
 from django.contrib.auth.decorators import user_passes_test
 from web.utils import load_page, get_or_none, allow_view
@@ -44,34 +44,26 @@ def pages(request, path):
 @login_required
 def challenges(request):
     categories = Category.objects.all()
-    challenges = Challenge.objects.values("id","title", "category", "points",
-                                                                     "active")
+    
     team = get_or_none(Team, player=request.user.id)
-    team_solved = SolvedChallenge.objects.values("challenge").filter(team=team)
-    for solved in team_solved:
-        for challenge in challenges:
-            if solved["challenge"] == challenge["id"]:
-                challenge["solved"] = True
-
-        
-
+    challenges = Challenge.objects.with_solves(team=team.id)
     return render(request, "web/challenges.html", {"challenges": challenges,
                                                    "categories": categories})
 
 
 @login_required
 def challenge(request, id):
-    challenge = Challenge.objects.select_related("category").get(id=id)
     team = get_or_none(Team, player=request.user.id)
-
+    challenge = Challenge.objects.with_solves(team=team.id, challenge=id)
+    
     if request.method == "POST":
         if "flag" in request.POST:
             flag = request.POST["flag"]
             if challenge.is_flag(flag):
                 solved = SolvedChallenge(team=team, challenge=challenge)
                 solved.save()
+                challenge.is_solved = True
 
-    
     return render(request, "web/challenge.html", {"challenge": challenge})
 
 
