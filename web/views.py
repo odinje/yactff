@@ -44,23 +44,22 @@ def pages(request, path):
 @login_required
 def challenges(request):
     categories = Category.objects.all()
-    
-    team = get_or_none(Team, player=request.user.id)
-    challenges = Challenge.objects.with_solves(team=team.id)
+
+    challenges = Challenge.objects.with_solves(team=request.user.team_id)
     return render(request, "web/challenges.html", {"challenges": challenges,
                                                    "categories": categories})
 
 
 @login_required
 def challenge(request, id):
-    team = get_or_none(Team, player=request.user.id)
-    challenge = Challenge.objects.with_solves(team=team.id, challenge=id)
+    team_id = request.user.team_id
+    challenge = Challenge.objects.with_solves(team=team_id, challenge=id)
     
     if request.method == "POST":
         if "flag" in request.POST:
             flag = request.POST["flag"]
             if challenge.is_flag(flag):
-                solved = SolvedChallenge(team=team, challenge=challenge)
+                solved = SolvedChallenge(team_id=team_id, challenge=challenge)
                 solved.save()
                 challenge.is_solved = True
 
