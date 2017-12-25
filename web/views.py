@@ -12,7 +12,7 @@ import os
 
 
 def index(request):
-    context = {'body': load_page(settings.PAGE_DIR + "index.md"), "type": "md"}
+    context = {'body': load_page(settings.PAGE_DIR + "index.html"), "type": "html"}
     return render(request, "web/index.html", context)
 
 def signup(request):

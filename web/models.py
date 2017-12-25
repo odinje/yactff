@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 
@@ -118,9 +120,11 @@ class Team(models.Model):
             return False
 
 
+
 class Player(models.Model):
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     team = models.ForeignKey("Team", on_delete=models.DO_NOTHING)
+
 
 
 class Page(models.Model):

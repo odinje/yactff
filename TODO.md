@@ -1,7 +1,7 @@
 TODO list
 ==========
 
-* Implement user and team profile.
+* Implement user and team profile. Possible to add groups, and restrictions to groups.
 * Implement team support
 * Implement challenges view
 * Implement scoreboard

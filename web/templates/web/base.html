@@ -29,7 +29,18 @@
       </ul>
     <ul class="nav navbar-nav ml-auto">
       {% if user.is_authenticated %}
-      <li class="nav-item"><a class="nav-link" href="/user/profile">{{user.username}}</a></li>
+      <li class="nav-item">
+        <div class="dropdown">
+            <button class="btn btn-link dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              {{user.username}}({{user.player.team.name}})
+          </button>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <a class="dropdown-item" href="/user/profile">Profile</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="/user/logout">Logout</a>
+          </div>
+          {# Generete one query to mutch, will be mitigated if User/Player class by encdeing custom class #}
+      </li>
       {% else %}
       <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
       {% endif %}
@@ -37,9 +48,11 @@
    </div>
   </nav>
 
+{% if False %}
 <div class="alert alert-danger alert-dismissible fade show" role="alert">
   Activate account
 </div> 
+{% endif %}
   <div class="container mt-5">
     {% block content %}{% endblock %}
   </div>
