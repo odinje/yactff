@@ -5,9 +5,13 @@
       <h2>{{category.name}}</h2>
 <div class="row mb-3">
       {% for challenge in challenges %}
+        {% with have_challenge=True %}
         {% if challenge.active and category.id == challenge.category_id %}
         <a role="button" class="btn col {{challenge.is_solved|yesno:"btn-success,btn-light"}}" href="{% url "challenge" challenge.id%}">{{challenge.title}} - {{challenge.points}}</a>
+        {% elif have_challenge and forloop.last %}
+        <p>No Challenges yet</p>
   {% endif %}
+  {% endwith %}
   {% endfor %}
   </div>
 {% endfor %}
