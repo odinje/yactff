@@ -4,7 +4,9 @@ A web framework for Jeoprody style CTF.
 
 ## Getting Started
 
-Below is documentation for setting up a development enviornment for YACTFF.
+Below is documentation for setting up a development enviornment for YACTFF. 
+
+[Screenshots](https://github.com/odinje/yactff/wiki/Screenshots)
 
 ### Prerequisites
 
