@@ -14,6 +14,9 @@ class Category(models.Model):
     name = models.CharField(max_length=50, unique=True)
     description = models.TextField(blank=True)
 
+    def _str_(self):
+        return self.name
+
 
 class Challenge(models.Model): # Maybe change title -> name
     #contest = models.ForeignKey("Competition", on_delete=models.DO_NOTHING)
@@ -46,6 +49,9 @@ class SolvedChallenge(models.Model): #Include which person who solved it?
 class Team(models.Model):
     name = models.CharField(max_length=200, unique=True)
     logo = models.ImageField(upload_to="team/logo/", max_length=255, blank=True) 
+
+    def _str_(self):
+        return self.name
 
     def is_solved(self, challenge):
         team_solved = SolvedChallenge.objects.filter(team=self.team, challenge=challenge)
