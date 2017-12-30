@@ -1,0 +1,20 @@
+{% extends "web/base.html" %}
+
+{% block content %}
+  <h1>Welcome, {{user.team.name}}</h1>
+  <hr \>
+  <div class="row">
+    <div class="col-md-4 alert alert-info">
+      <h2 class="alert-heading">Team members</h2>
+      <ul>
+        {% for member in members %}
+        <li>{{member.nickname}}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="col-md-4">
+      <h3>Solved challenges</h3>
+    </div>
+  </div>
+  
+{% endblock %}

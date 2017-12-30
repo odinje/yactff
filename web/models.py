@@ -7,7 +7,6 @@ from django.contrib.auth.models import PermissionsMixin
 from django.utils.translation import ugettext_lazy as _
 
 from web.managers import UserManager, ChallengeManger
-#from web.managers import ChallengeManger
 
 
 class Category(models.Model):
@@ -19,7 +18,6 @@ class Category(models.Model):
 
 
 class Challenge(models.Model): # Maybe change title -> name
-    #contest = models.ForeignKey("Competition", on_delete=models.DO_NOTHING)
     title = models.CharField(max_length=200, unique=True)
     category = models.ForeignKey("Category", on_delete=models.DO_NOTHING)
     description = models.TextField()
@@ -60,6 +58,10 @@ class Team(models.Model):
             return True
         else:
             return False
+    
+    def get_members(self):
+        return User.objects.values("nickname").filter(team=self.id)
+
 
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(_('email address'), unique=True)

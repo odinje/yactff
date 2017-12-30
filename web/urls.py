@@ -12,6 +12,7 @@ urlpatterns = [
     url(r'^signup/$', views.signup, name='signup'),
     path("user/logout", auth_views.logout, {'next_page': '/'}, name='logout'),
     path("user/profile", views.user_profile, name="user_profile"),
+    path("team/profile", views.team_profile, name="team_profile"),
     re_path(r"^admin/web/page/(?P<id>\d+)/change/(?P<filename>.*)/$", views.download_page_file, name="download_page_file")
 ]
 
