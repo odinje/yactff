@@ -5,7 +5,7 @@ from web.utils import load_page, get_or_none, allow_view
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
-from web.models import Page, Category, Challenge, Team, SolvedChallenge
+from web.models import Page, Category, Challenge, Team, SolvedChallenge, load_local_pages
 from django.conf import settings
 import os
 

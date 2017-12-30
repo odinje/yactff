@@ -6,4 +6,3 @@ class WebConfig(AppConfig):
 
     def ready(self):
         pass
-

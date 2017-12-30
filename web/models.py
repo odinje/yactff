@@ -5,8 +5,9 @@ from django.contrib.auth.base_user import AbstractBaseUser
 from django.core.mail import send_mail
 from django.contrib.auth.models import PermissionsMixin
 from django.utils.translation import ugettext_lazy as _
-
 from web.managers import UserManager, ChallengeManger
+
+import glob
 
 
 class Category(models.Model):
@@ -106,10 +107,21 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class Page(models.Model):
+    TYPE_CHOICES = (
+            ("MARKDOWN", "md"),
+            ("HTML", "html"),
+    )
     page_dir = FileSystemStorage(location=settings.PAGE_DIR)
     name = models.CharField(max_length=20, unique=True)
     path = models.CharField(max_length=20, unique=True)
-    type = models.CharField(max_length=4, default="html")
+    type = models.CharField(max_length=4, choices=TYPE_CHOICES)
     in_menu = models.BooleanField()
-    file = models.FileField(storage=page_dir, null=True)
+    #file = models.FileField(storage=page_dir, null=True)
     #content = models.TextField(default="Index\n#####")
+
+
+def load_local_pages():
+    files = []
+    for type in Page.TYPE_CHOICES:
+        files.extend(glob.glob("{0}/*{1}".format(settings.PAGE_DIR, type[1])))  
+    print(files)
