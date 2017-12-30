@@ -58,7 +58,7 @@ class Team(models.Model):
             return True
         else:
             return False
-    
+
     def get_members(self):
         return User.objects.values("nickname").filter(team=self.id)
 
@@ -86,7 +86,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         '''
         Returns the first_name plus the last_name, with a space in between.
         '''
-        full_name = '%s %s' % (self.first_name, self.last_name)
+        full_name = "{0} {1}".format(self.first_name, self.last_name)
         return full_name.strip()
 
     def get_nickname_and_team(self):
@@ -94,7 +94,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         Returns the nickname of the user, and the team name if exists.
         '''
         if self.team:
-            return  "{0} ({1})".format(self.nickname, self.team.name)
+            return "{0} ({1})".format(self.nickname, self.team.name)
         else:
             return self.nickname
 
