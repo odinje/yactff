@@ -9,5 +9,5 @@ def header(request):
     obj = Page.objects.all()
     for page in obj:
         if page.in_menu:
-            pages[page.name] = "/page/" + page.path
+            pages[page.name.title()] = "/page/" + page.name
     return {'ctf_name': settings.CTF_NAME, 'pages': sorted(pages.items())}

@@ -14,7 +14,7 @@ import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PAGE_DIR ="{}/web/pages/web/".format(BASE_DIR)
+PAGE_DIR ="{}/web/pages/web".format(BASE_DIR)
 LOGGING_CONFIG = None
 AUTH_USER_MODEL = 'web.User'
 LOGGING = {

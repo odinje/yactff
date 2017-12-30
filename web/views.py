@@ -10,11 +10,6 @@ from django.conf import settings
 import os
 
 
-
-def index(request):
-    context = {'body': load_page(settings.PAGE_DIR + "index.html"), "type": "html"}
-    return render(request, "web/index.html", context)
-
 def signup(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
@@ -30,11 +25,14 @@ def signup(request):
     return render(request, 'web/signup.html', {'form': form})
 
 
-def pages(request, path):
-    page = get_or_none(Page, path=path)
-    
+def page(request, path=None):
+    if path:
+        name = path.split("/")[-1]
+    else:
+        name = "index"
+    page = get_or_none(Page, name=name)
     if page:
-        context = {"body": load_page(page.file.path),
+        context = {"body": page.content,
             "type": page.type}
         return render(request, "web/page.html", context)
     else:

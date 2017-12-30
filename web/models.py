@@ -108,20 +108,29 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class Page(models.Model):
     TYPE_CHOICES = (
-            ("MARKDOWN", "md"),
-            ("HTML", "html"),
+            ("md", "markdown"),
+            ("html", "html"),
     )
-    page_dir = FileSystemStorage(location=settings.PAGE_DIR)
+    #page_dir = FileSystemStorage(location=settings.PAGE_DIR)
     name = models.CharField(max_length=20, unique=True)
-    path = models.CharField(max_length=20, unique=True)
+    #path = models.CharField(max_length=20, unique=True)
     type = models.CharField(max_length=4, choices=TYPE_CHOICES)
-    in_menu = models.BooleanField()
+    in_menu = models.BooleanField(default=False)
     #file = models.FileField(storage=page_dir, null=True)
-    #content = models.TextField(default="Index\n#####")
+    content = models.TextField()
 
 
 def load_local_pages():
-    files = []
+    '''
+    Then read all local page file, and load it into the database.
+    '''
+
     for type in Page.TYPE_CHOICES:
-        files.extend(glob.glob("{0}/*{1}".format(settings.PAGE_DIR, type[1])))  
-    print(files)
+        files = glob.glob("{0}/*{1}".format(settings.PAGE_DIR, type[0]))
+        for file in files:
+            name = file.split("/")[-1]
+            name = name.split(".")[0]
+            
+            with open(file, "r") as f:
+                _ = Page.objects.get_or_create(name=name.lower(), type=type[0], content=f.read())
+    
