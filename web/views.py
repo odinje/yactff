@@ -72,8 +72,12 @@ def user_profile(request):
 @login_required # Maybe also have team requuired
 def team_profile(request):
     members = request.user.team.get_members()
-    print(members)
     return render(request, "web/team_profile.html", {"members": members})
+
+@login_required
+def team_join(request):
+    raise Http404
+
 
 @user_passes_test(lambda u: u.is_superuser) #TODO: Maybe change to is_staff?
 def download_page_file(request, id, filename):
