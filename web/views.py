@@ -33,7 +33,11 @@ def page(request, path=None):
     page = get_or_none(Page, name=name)
     if page:
         context = {"body": page.content,
-            "type": page.type}
+                   "type": page.type}
+        return render(request, "web/page.html", context)
+    elif page is None and name == "index":
+        context = {"body": "<h3>Index page is empty</h3>",
+                   "type": "html"}
         return render(request, "web/page.html", context)
     else:
         raise Http404
@@ -69,10 +73,11 @@ def user_profile(request):
     return render(request, "web/user_profile.html")
 
 
-@login_required # Maybe also have team requuired
+@login_required  # Maybe also have team requuired
 def team_profile(request):
     members = request.user.team.get_members()
     return render(request, "web/team_profile.html", {"members": members})
+
 
 @login_required
 def team_join(request):
