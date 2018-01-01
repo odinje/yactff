@@ -15,8 +15,9 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PAGE_DIR ="{}/web/pages/web".format(BASE_DIR)
+LOGIN_URL = "/login"
 LOGGING_CONFIG = None
-AUTH_USER_MODEL = 'web.User'
+AUTH_USER_MODEL = "web.User"
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,  # this fixes the problem
