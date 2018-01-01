@@ -1,13 +1,10 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.http import Http404, HttpResponse, JsonResponse
-from django.contrib.auth.decorators import user_passes_test
-from web.utils import load_page, get_or_none, allow_view
+from django.shortcuts import render, redirect
+from django.http import Http404
+from web.utils import get_or_none
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
-from web.models import Page, Category, Challenge, Team, SolvedChallenge, load_local_pages
-from django.conf import settings
-import os
+from web.models import Page, Category, Challenge, SolvedChallenge
 
 
 def signup(request):
@@ -56,7 +53,7 @@ def challenges(request):
 def challenge(request, id):
     team_id = request.user.team_id
     challenge = Challenge.objects.with_solves(team=team_id, challenge=id)
-    
+
     if request.method == "POST":
         if "flag" in request.POST:
             flag = request.POST["flag"]
@@ -82,12 +79,3 @@ def team_profile(request):
 @login_required
 def team_join(request):
     raise Http404
-
-
-@user_passes_test(lambda u: u.is_superuser) #TODO: Maybe change to is_staff?
-def download_page_file(request, id, filename):
-    filepath = settings.PAGE_DIR + filename 
-    response = HttpResponse(load_page(filepath), "applicaion/text")
-    response['Content-Disposition'] = "attachment; filename={0}".format(filename)
-    response['Content-Length'] = os.path.getsize(filepath)
-    return response

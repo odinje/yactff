@@ -1,5 +1,4 @@
 from django.db import models
-from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.core.mail import send_mail
@@ -18,7 +17,7 @@ class Category(models.Model):
         return self.name
 
 
-class Challenge(models.Model): # Maybe change title -> name
+class Challenge(models.Model):  # Maybe change title -> name
     title = models.CharField(max_length=200, unique=True)
     category = models.ForeignKey("Category", on_delete=models.DO_NOTHING)
     description = models.TextField()
@@ -26,21 +25,21 @@ class Challenge(models.Model): # Maybe change title -> name
     key = models.CharField(max_length=200)
     active = models.BooleanField(default=False)
     author = models.ForeignKey("User", on_delete=models.DO_NOTHING, blank=True)  # author
-   
+
     objects = ChallengeManger()
-   
+
     def _str_(self):
         return self.title
 
     def is_flag(self, flag):
-        if self.key == flag: # Maybe update key => flag
+        if self.key == flag:  # Maybe update key => flag
             return True
         return False
 
 
 # Rename to submissions
-class SolvedChallenge(models.Model): #Include which person who solved it?
-    team = models.ForeignKey("Team", on_delete=models.DO_NOTHING) 
+class SolvedChallenge(models.Model):  # Include which person who solved it?
+    team = models.ForeignKey("Team", on_delete=models.DO_NOTHING)
     challenge = models.ForeignKey("Challenge", on_delete=models.DO_NOTHING)
     completed = models.DateTimeField(auto_now_add=True)
 
@@ -71,7 +70,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(_('last name'), max_length=30, blank=True)
     date_joined = models.DateTimeField(_('date joined'), auto_now_add=True)
     is_active = models.BooleanField(_('active'), default=True)
-    is_staff = models.BooleanField(_("staff"), default=True)
+    is_staff = models.BooleanField(_("staff"), default=True)  # Can probably be removed since superuser is enoguh
     team = models.ForeignKey("Team", on_delete=models.DO_NOTHING, null=True)
 
     objects = UserManager()
@@ -111,12 +110,9 @@ class Page(models.Model):
             ("md", "markdown"),
             ("html", "html"),
     )
-    #page_dir = FileSystemStorage(location=settings.PAGE_DIR)
     name = models.CharField(max_length=20, unique=True)
-    #path = models.CharField(max_length=20, unique=True)
     type = models.CharField(max_length=4, choices=TYPE_CHOICES)
     in_menu = models.BooleanField(default=False)
-    #file = models.FileField(storage=page_dir, null=True)
     content = models.TextField()
 
 
@@ -130,7 +126,6 @@ def load_local_pages():
         for file in files:
             name = file.split("/")[-1]
             name = name.split(".")[0]
-            
+
             with open(file, "r") as f:
-                _ = Page.objects.get_or_create(name=name.lower(), type=type[0], content=f.read())
-    
+                Page.objects.get_or_create(name=name.lower(), type=type[0], content=f.read())

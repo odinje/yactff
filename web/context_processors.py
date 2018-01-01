@@ -3,8 +3,8 @@ from .models import Page
 
 
 def header(request):
-    pages = {'Scoreboard': '/scoreboard',
-            'Challenges': '/challenges',}
+    pages = {"Scoreboard": "/scoreboard",
+             "Challenges": "/challenges"}
 
     obj = Page.objects.all()
     for page in obj:
