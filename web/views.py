@@ -5,7 +5,7 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from web.models import Page, Category, Challenge, SolvedChallenge
-
+from django.conf import settings
 
 def signup(request):
     if request.method == 'POST':
@@ -72,8 +72,9 @@ def user_profile(request):
 
 @login_required  # Maybe also have team requuired
 def team_profile(request):
-    members = request.user.team.get_members()
-    return render(request, "web/team_profile.html", {"members": members})
+    team = request.user.team
+    max_team_size = settings.MAX_TEAM_SIZE
+    return render(request, "web/team_profile.html", {"team": team, "team_view": True, "max_team_size": max_team_size})
 
 
 @login_required

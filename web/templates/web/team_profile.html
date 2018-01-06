@@ -1,17 +1,30 @@
 {% extends "web/base.html" %}
 
 {% block content %}
-  <h1>Welcome, {{user.team.name}}</h1>
+<h1>{{ team_view|yesno:"Welcome&#44,Team&#58"|safe }} {{team.name}}</h1>
   <hr \>
   <div class="row">
-    <div class="col-md-4 alert alert-info">
+    {% with members=team.get_members %}
+    <div class="col-md-5 alert alert-info">
       <h2 class="alert-heading">Team members</h2>
       <ul>
         {% for member in members %}
         <li>{{member.nickname}}</li>
         {% endfor %}
       </ul>
+      <hr />
+      {% if team_view %}
+      <p>{{ members|length }} of {{max_team_size }} team members. <a href="#"  data-toggle="modal" data-target="#tokenModal" class="alert-link">Show team token</a></p>
+      <div class="modal fade" id="tokenModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            9bcf74b8-d1d2-4d33-ad75-a7ef67dc6dac
+          </div>
+        </div>
+      </div>
+      {% endif %}
     </div>
+    {% endwith %}
     <div class="col-md-4">
       <h3>Solved challenges</h3>
     </div>

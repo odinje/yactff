@@ -136,3 +136,4 @@ STATIC_URL = '/static/'
 
 LOGIN_REDIRECT_URL = 'index'
 CTF_NAME = "Capture Tha Flag"
+MAX_TEAM_SIZE = 5
