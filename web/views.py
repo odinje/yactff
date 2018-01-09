@@ -6,6 +6,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from web.models import Page, Category, Challenge, SolvedChallenge
 from django.conf import settings
+from django.db.models import F
 
 def signup(request):
     if request.method == 'POST':
@@ -74,7 +75,11 @@ def user_profile(request):
 def team_profile(request):
     team = request.user.team
     max_team_size = settings.MAX_TEAM_SIZE
-    return render(request, "web/team_profile.html", {"team": team, "team_view": True, "max_team_size": max_team_size})
+    try:  # Move this to models.py
+        challenges = SolvedChallenge.objects.annotate(title=F("challenge__title"), points=F("challenge__points")).select_related("challenge").filter(team=team)
+    except:
+        challenges = None
+    return render(request, "web/team_profile.html", {"team": team, "team_view": True, "max_team_size": max_team_size, "challenges": challenges})
 
 
 @login_required

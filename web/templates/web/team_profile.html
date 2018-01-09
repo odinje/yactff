@@ -5,7 +5,7 @@
   <hr \>
   <div class="row">
     {% with members=team.get_members %}
-    <div class="col-md-5 alert alert-info">
+    <div class="col alert alert-info">
       <h2 class="alert-heading">Team members</h2>
       <ul>
         {% for member in members %}
@@ -25,8 +25,30 @@
       {% endif %}
     </div>
     {% endwith %}
-    <div class="col-md-4">
+    <div class="col">
       <h3>Solved challenges</h3>
+      {% if challenges %}
+      <table class="table table-sm table-striped">
+        <tbody>
+          <tr>
+            <th>Challenge:</th>
+            <th>Points:</th>
+            <th>Solved by:</th>
+            <th>Time:</th>
+          <tr>
+          {% for challenge in challenges %}
+          <tr>
+            <td>{{ challenge.title }}</td>
+            <td>{{ challenge.points }}</td>
+            <td>TODO!</td>
+            <td>{{ challenge.completed|date:"Y-m-d H:i:s"}}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p>None challenges solved!</p>
+      {% endif %}
     </div>
   </div>
   
