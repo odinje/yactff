@@ -8,6 +8,9 @@
   <div class="card-body">
     <h4 class="card-title">{{challenge.title}} <span class="badge badge-secondary"> Points: {{challenge.points}}</span></h4>
     <p class="card-text">{{challenge.description}}<p>
+    {% if challenge.file %}
+    <p class="card-text"><a href="{{challenge.file.url}}">{{challenge.file}}</a></p>
+    {% endif %}
   </div>
   <div class="card-body">
     <form method="post">

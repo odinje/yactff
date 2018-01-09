@@ -5,10 +5,9 @@ from django.core.mail import send_mail
 from django.contrib.auth.models import PermissionsMixin
 from django.utils.translation import ugettext_lazy as _
 from web.managers import UserManager, ChallengeManger, SubmissionManager
-
 import glob
 
-
+# remove description? Need?
 class Category(models.Model):
     name = models.CharField(max_length=50, unique=True)
     description = models.TextField(blank=True)
@@ -25,6 +24,7 @@ class Challenge(models.Model):  # Maybe change title -> name
     key = models.CharField(max_length=200)
     active = models.BooleanField(default=False)
     author = models.ForeignKey("User", on_delete=models.DO_NOTHING, blank=True)  # author
+    file = models.FileField(upload_to="files", blank=True)
 
     objects = ChallengeManger()
 
@@ -123,7 +123,6 @@ def load_local_pages():
     '''
     Then read all local page file, and load it into the database.
     '''
-
     for type in Page.TYPE_CHOICES:
         files = glob.glob("{0}/*{1}".format(settings.PAGE_DIR, type[0]))
         for file in files:

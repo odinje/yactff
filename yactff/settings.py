@@ -133,7 +133,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
-
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR + "/media/"
 LOGIN_REDIRECT_URL = 'index'
 CTF_NAME = "Capture Tha Flag"
 MAX_TEAM_SIZE = 5
