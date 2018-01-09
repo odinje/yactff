@@ -1,6 +1,7 @@
 from django.contrib.auth.base_user import BaseUserManager
 from django.db import models
 from django.apps import apps
+from django.db.models import F
 
 class UserManager(BaseUserManager):
     use_in_migrations = True
@@ -33,7 +34,7 @@ class UserManager(BaseUserManager):
 class ChallengeManger(models.Manager):
     def with_solves(self, team, challenge=None):
         challenges = apps.get_model("web.Challenge")
-        solves = apps.get_model("web.SolvedChallenge")
+        solves = apps.get_model("web.Submission")
         
         if challenge:
             challenges = challenges.objects.get(id=challenge)
@@ -55,3 +56,19 @@ class ChallengeManger(models.Manager):
                         challenge.is_solved = False
 
         return challenges
+
+
+class SubmissionManager(models.Manager):
+    def get_solved(self, team=None, user=None):
+        if team is None and user is None:
+            print("Both canot be none")
+            return None
+        elif team is not None:
+            filter = { "team": team }
+        elif user is not None:
+            filter = { "team": team, "solved_by": user } 
+        try:
+            submission = apps.get_model("web.Submission")
+            return submission.objects.annotate(title=F("challenge__title"), points=F("challenge__points")).select_related("challenge", "solved_by").filter(**filter)
+        except:
+            return None

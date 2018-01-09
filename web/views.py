@@ -4,9 +4,9 @@ from web.utils import get_or_none
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
-from web.models import Page, Category, Challenge, SolvedChallenge
+from web.models import Page, Category, Challenge, Submission
 from django.conf import settings
-from django.db.models import F
+
 
 def signup(request):
     if request.method == 'POST':
@@ -52,14 +52,16 @@ def challenges(request):
 
 @login_required
 def challenge(request, id):
-    team_id = request.user.team_id
+    user = request.user
+    team_id = user.team_id
+
     challenge = Challenge.objects.with_solves(team=team_id, challenge=id)
 
     if request.method == "POST":
         if "flag" in request.POST:
             flag = request.POST["flag"]
             if challenge.is_flag(flag):
-                solved = SolvedChallenge(team_id=team_id, challenge=challenge)
+                solved = Submission(team_id=team_id, challenge=challenge, solved_by=user)
                 solved.save()
                 challenge.is_solved = True
 
@@ -68,17 +70,17 @@ def challenge(request, id):
 
 @login_required
 def user_profile(request):
-    return render(request, "web/user_profile.html")
+    user = request.user
+    team = user.team
+    challenges = Submission.objects.get_solved(team=team, user=user)
+    return render(request, "web/user_profile.html", {"challenges": challenges})
 
 
 @login_required  # Maybe also have team requuired
 def team_profile(request):
     team = request.user.team
     max_team_size = settings.MAX_TEAM_SIZE
-    try:  # Move this to models.py
-        challenges = SolvedChallenge.objects.annotate(title=F("challenge__title"), points=F("challenge__points")).select_related("challenge").filter(team=team)
-    except:
-        challenges = None
+    challenges = Submission.objects.get_solved(team=team)
     return render(request, "web/team_profile.html", {"team": team, "team_view": True, "max_team_size": max_team_size, "challenges": challenges})
 
 

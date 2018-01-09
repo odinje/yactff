@@ -31,15 +31,26 @@
                         </div>
                         <div class="col-md-12">
                             <h5 class="mt-2"><span class="fa fa-clock-o ion-clock float-right"></span> Solved challenges</h5>
-                            <table class="table table-sm table-hover table-striped">
-                                <tbody>                                    
-                                    <tr>
-                                        <td>
-                                            <strong>100</strong> Super RSA
-                                        </td>
-                                    </tr>
-                                </tbody>
+                            {% if challenges %}
+                            <table class="table table-sm table-striped">
+                              <tbody>                                    
+                                <tr>
+                                  <th>Challenge:</th>
+                                  <th>Points:</th>
+                                  <th>Time</th>
+                                <tr>
+                                {% for challenge in challenges %}
+                                <tr>
+                                  <td>{{ challenge.title }}</td>
+                                  <td>{{ challenge.points }}</td>
+                                  <td>{{ challenge.completed|date:"Y-m-d H:i:s" }}</td>
+                                </tr>
+                                {% endfor %}
+                              </tbody>
                             </table>
+                            {% else %}
+                            <p>You have solved none challenges</p>
+                            {% endif %}
                         </div>
                     </div>
 

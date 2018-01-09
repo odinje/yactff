@@ -4,7 +4,7 @@ from django.contrib.auth.base_user import AbstractBaseUser
 from django.core.mail import send_mail
 from django.contrib.auth.models import PermissionsMixin
 from django.utils.translation import ugettext_lazy as _
-from web.managers import UserManager, ChallengeManger
+from web.managers import UserManager, ChallengeManger, SubmissionManager
 
 import glob
 
@@ -38,10 +38,13 @@ class Challenge(models.Model):  # Maybe change title -> name
 
 
 # Rename to submissions
-class SolvedChallenge(models.Model):  # Include which person who solved it?
+class Submission(models.Model):  # Include which person who solved it?
     team = models.ForeignKey("Team", on_delete=models.DO_NOTHING)
     challenge = models.ForeignKey("Challenge", on_delete=models.DO_NOTHING)
     completed = models.DateTimeField(auto_now_add=True)
+    solved_by = models.ForeignKey("User", on_delete=models.DO_NOTHING)
+
+    objects = SubmissionManager()
 
 
 class Team(models.Model):
@@ -52,7 +55,7 @@ class Team(models.Model):
         return self.name
 
     def is_solved(self, challenge):
-        team_solved = SolvedChallenge.objects.filter(team=self.team, challenge=challenge)
+        team_solved = Submission.objects.filter(team=self.team, challenge=challenge)
 
         if team_solved.exists():
             return True

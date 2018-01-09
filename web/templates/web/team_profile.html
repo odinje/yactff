@@ -40,7 +40,7 @@
           <tr>
             <td>{{ challenge.title }}</td>
             <td>{{ challenge.points }}</td>
-            <td>TODO!</td>
+            <td>{{ challenge.solved_by.nickname }}</td>
             <td>{{ challenge.completed|date:"Y-m-d H:i:s"}}</td>
           </tr>
           {% endfor %}

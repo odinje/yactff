@@ -1,11 +1,11 @@
 from django.contrib import admin
-from .models import Category, Challenge, SolvedChallenge, Team, Page, User
+from web.models import Category, Challenge, Submission, Team, Page, User
 from django.conf import settings
 
 
 admin.site.register(Category)
 admin.site.register(Challenge)
-admin.site.register(SolvedChallenge)
+admin.site.register(Submission)
 admin.site.register(Team)
 admin.site.register(User)
 
