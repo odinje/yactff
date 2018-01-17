@@ -1,0 +1,14 @@
+{% extends 'web/base.html' %}
+
+{% block content %}
+<h2 class="form-signin-heading">Create your team</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <ul>
+      <li>You team can consist of maximun: {{ max_team_size }}</li>
+      <li>You can invite you team members with the token which can be shown at the team profile</li>
+    </ul>
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Create</button>
+  </form>
+{% endblock %}

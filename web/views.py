@@ -6,9 +6,12 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from web.models import Page, Category, Challenge, Submission
 from django.conf import settings
+from web.forms import TeamCreateForm
 
 
 def signup(request):
+    if request.user:
+        return redirect("index")
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
@@ -87,3 +90,22 @@ def team_profile(request):
 @login_required
 def team_join(request):
     raise Http404
+
+@login_required
+def team_create(request):
+    user = request.user
+    if user.team:
+        return redirect("team_profile")
+    if request.method == "POST":
+        form = TeamCreateForm(request.POST)
+        if form.is_valid():
+            team = form.save()
+            user.team = team
+            user.save()
+
+            return redirect("team_profile")
+    else:
+        form = TeamCreateForm()
+    max_team_size = settings.MAX_TEAM_SIZE
+    return render(request, "web/team_create.html", {"form": form,
+                    "max_team_size": max_team_size})

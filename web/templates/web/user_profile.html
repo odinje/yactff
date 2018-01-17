@@ -57,12 +57,14 @@
                     <!--/row-->
 
                 </div>
+                {% if not user.team %}
                 <div class="tab-pane" id="team-join">
                   Join team:<br>
                   Token:
                   <hr>
-                  Create team
+                  <a href={% url 'team_create' %}>Create Team</a>
                 </div>
+                {% endif %}
 
                 <div class="tab-pane" id="edit">
                     <form role="form">
