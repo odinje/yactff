@@ -109,6 +109,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         '''
         send_mail(subject, message, from_email, [self.email], **kwargs)
 
+    def have_team(self):
+        return True if self.team else False
+
 
 class Page(models.Model):
     TYPE_CHOICES = (
