@@ -6,6 +6,7 @@ from django.contrib.auth.models import PermissionsMixin
 from django.utils.translation import ugettext_lazy as _
 from web.managers import UserManager, ChallengeManger, SubmissionManager
 import glob
+import uuid
 
 # remove description? Need?
 class Category(models.Model):
@@ -50,7 +51,8 @@ class Submission(models.Model):  # Include which person who solved it?
 class Team(models.Model):
     name = models.CharField(max_length=200, unique=True)
     logo = models.ImageField(upload_to="team/logo/", max_length=255, blank=True) 
-
+    token = models.UUIDField(default=uuid.uuid4, editable=False)
+    
     def _str_(self):
         return self.name
 

@@ -5,3 +5,4 @@ class TeamCreateForm(ModelForm):
     class Meta:
         model = Team
         fields = ["name", "logo"]
+

@@ -14,14 +14,8 @@
       </ul>
       <hr />
       {% if team_view %}
-      <p>{{ members|length }} of {{max_team_size }} team members. <a href="#"  data-toggle="modal" data-target="#tokenModal" class="alert-link">Show team token</a></p>
-      <div class="modal fade" id="tokenModal" tabindex="-1" role="dialog">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            9bcf74b8-d1d2-4d33-ad75-a7ef67dc6dac
-          </div>
-        </div>
-      </div>
+      <p>{{ members|length }} of {{max_team_size }} team members.</p>
+      <p><b>Team token:</b> {{ team.token }}</p>
       {% endif %}
     </div>
     {% endwith %}

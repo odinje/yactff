@@ -6,7 +6,6 @@ from django.conf import settings
 admin.site.register(Category)
 admin.site.register(Challenge)
 admin.site.register(Submission)
-admin.site.register(Team)
 admin.site.register(User)
 
 
@@ -17,3 +16,8 @@ class PageAdmin(admin.ModelAdmin):
         path = "{0}/{1}.{2}".format(settings.PAGE_DIR, obj.name, obj.type)
         with open(path, "w") as f:
             f.write(obj.content)
+
+
+@admin.register(Team)
+class TeamAdmin(admin.ModelAdmin):
+    readonly_fields=('token',)

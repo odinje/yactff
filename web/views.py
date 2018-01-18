@@ -1,13 +1,12 @@
 from django.shortcuts import render, redirect
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from web.utils import get_or_none
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
-from web.models import Page, Category, Challenge, Submission
+from web.models import Page, Category, Challenge, Submission, Team
 from django.conf import settings
 from web.forms import TeamCreateForm
-
 
 def signup(request):
     if request.user:
@@ -88,10 +87,6 @@ def team_profile(request):
 
 
 @login_required
-def team_join(request):
-    raise Http404
-
-@login_required
 def team_create(request):
     user = request.user
     if user.team:
@@ -109,3 +104,19 @@ def team_create(request):
     max_team_size = settings.MAX_TEAM_SIZE
     return render(request, "web/team_create.html", {"form": form,
                     "max_team_size": max_team_size})
+
+
+@login_required  # TODO: REDO, maybe implment in form so it is possible to use form features
+def team_join(request):
+    user = request.user
+    if request.method == "POST":
+        token = request.POST["token"]
+        try:
+            team = Team.objects.get(token=token)
+            user.team = team
+            user.save()
+        except:
+            return HttpResponse("Team not found")
+        return redirect("team_profile")
+    else:
+        return HttpResponse(status=405)

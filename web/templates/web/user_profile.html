@@ -59,8 +59,9 @@
                 </div>
                 {% if not user.team %}
                 <div class="tab-pane" id="team-join">
-                  Join team:<br>
-                  Token:
+                  <form action={% url "team_join" %} method="post">{% csrf_token %}
+                  <b>Token:</b><input type="text" name="token" maxlength="36" size="36"><input type="submit" value="Join team">
+                  </form>
                   <hr>
                   <a href={% url 'team_create' %}>Create Team</a>
                 </div>
