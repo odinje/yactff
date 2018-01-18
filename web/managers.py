@@ -1,7 +1,7 @@
 from django.contrib.auth.base_user import BaseUserManager
 from django.db import models
 from django.apps import apps
-from django.db.models import F
+from django.db.models import F, Sum
 
 class UserManager(BaseUserManager):
     use_in_migrations = True
@@ -72,3 +72,10 @@ class SubmissionManager(models.Manager):
             return submission.objects.annotate(title=F("challenge__title"), points=F("challenge__points")).select_related("challenge", "solved_by").filter(**filter)
         except:
             return None
+
+    def scoreboard(self):
+        submission = apps.get_model("web.Submission")
+        return submission.objects.values("team").annotate(score=Sum("challenge__points"))
+        #return submission.objects.values("team").aggregate(score=Sum("challenge__points"))
+
+

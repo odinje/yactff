@@ -38,7 +38,6 @@ class Challenge(models.Model):  # Maybe change title -> name
         return False
 
 
-# Rename to submissions
 class Submission(models.Model):  # Include which person who solved it?
     team = models.ForeignKey("Team", on_delete=models.DO_NOTHING)
     challenge = models.ForeignKey("Challenge", on_delete=models.DO_NOTHING)

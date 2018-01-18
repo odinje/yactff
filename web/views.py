@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, JsonResponse
 from web.utils import get_or_none
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required, user_passes_test
 from web.models import Page, Category, Challenge, Submission, Team
 from django.conf import settings
 from web.forms import TeamCreateForm, UserCreationForm
+
 
 @user_passes_test(lambda u: not u.is_authenticated, login_url="index",
         redirect_field_name=None)
@@ -67,6 +68,18 @@ def challenge(request, id):
                 challenge.is_solved = True
 
     return render(request, "web/challenge.html", {"challenge": challenge})
+
+
+@login_required
+def scoreboard(request):
+    pass
+
+@login_required
+def api_scoreboard(request):
+    scores = Submission.objects.scoreboard()
+    return HttpResponse(scores)
+    #¤return JsonResponse(scores)    
+
 
 
 @login_required
