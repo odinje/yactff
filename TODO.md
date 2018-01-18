@@ -1,9 +1,6 @@
 TODO list
 ==========
 
-* Implement user and team profile. Possible to add groups, and restrictions to groups.
-* Implement team support
-* Implement challenges view
 * Implement scoreboard
 * Implement footer with challenge pinning, and message admin functionality which is optional and connected to IRC/Slack/(Discord?)
 * Change button active effect with JS
