@@ -1,0 +1,17 @@
+{% extends "web/base.html" %}
+
+{% block content %}
+{% load static %}
+<script src={% static "web/js/scoreboard.js" %}></script>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">Placement</th>
+      <th scope="col">Team Name</th>
+      <th scope="col">Score</th>
+    </tr>
+  </thead>
+  <tbody id="scoreboard">
+  </tbody>
+</table>
+{% endblock %}

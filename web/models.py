@@ -4,7 +4,7 @@ from django.contrib.auth.base_user import AbstractBaseUser
 from django.core.mail import send_mail
 from django.contrib.auth.models import PermissionsMixin
 from django.utils.translation import ugettext_lazy as _
-from web.managers import UserManager, ChallengeManger, SubmissionManager
+from web.managers import UserManager, ChallengeManger, SubmissionManager, TeamManager
 import glob
 import uuid
 
@@ -52,6 +52,8 @@ class Team(models.Model):
     logo = models.ImageField(upload_to="team/logo/", max_length=255, blank=True) 
     token = models.UUIDField(default=uuid.uuid4, editable=False)
     
+    objects = TeamManager()
+
     def _str_(self):
         return self.name
 

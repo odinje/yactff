@@ -8,6 +8,7 @@ from django.conf import settings
 from web.forms import TeamCreateForm, UserCreationForm
 
 
+
 @user_passes_test(lambda u: not u.is_authenticated, login_url="index",
         redirect_field_name=None)
 def signup(request):
@@ -72,13 +73,12 @@ def challenge(request, id):
 
 @login_required
 def scoreboard(request):
-    pass
+    return render(request, "web/scoreboard.html")
 
 @login_required
 def api_scoreboard(request):
-    scores = Submission.objects.scoreboard()
-    return HttpResponse(scores)
-    #¤return JsonResponse(scores)    
+    scores = Team.objects.scoreboard()
+    return JsonResponse(scores, safe=False)    
 
 
 
