@@ -2,10 +2,11 @@ from django.shortcuts import render, redirect
 from django.http import Http404, HttpResponse, JsonResponse
 from web.utils import get_or_none
 from django.contrib.auth import login, authenticate
+from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from web.models import Page, Category, Challenge, Submission, Team
 from django.conf import settings
-from web.forms import TeamCreateForm, UserCreationForm
+from web.forms import TeamCreateForm, UserCreationForm, UserChangeForm
 
 
 
@@ -19,7 +20,7 @@ def signup(request):
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(email=email, password=raw_password)
             login(request, user)
-            return redirect('index')
+            return redirect("index")
     else:
         form = UserCreationForm()
     return render(request, 'web/signup.html', {'form': form})
@@ -86,7 +87,17 @@ def user_profile(request):
     user = request.user
     team = user.team
     challenges = Submission.objects.get_solved(team=team, user=user)
-    return render(request, "web/user_profile.html", {"challenges": challenges})
+    if request.method == "POST":
+        pass
+    else:
+        userdata_form = UserChangeForm(instance=user)
+        password_form =  PasswordChangeForm(user)
+        return render(request, "web/user_profile.html", 
+            {
+                "challenges": challenges,
+                "password_form": password_form,
+                "userdata_form": userdata_form,
+            })
 
 
 @user_passes_test(lambda u: u.have_team(), login_url="user_profile", redirect_field_name=None)
