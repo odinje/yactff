@@ -63,10 +63,10 @@ class SubmissionManager(models.Manager):
         if team is None and user is None:
             print("Both canot be none")
             return None
-        elif team is not None:
-            filter = { "team": team }
         elif user is not None:
             filter = { "team": team, "solved_by": user } 
+        elif team is not None:
+            filter = { "team": team }
         try:
             submission = apps.get_model("web.Submission")
             return submission.objects.annotate(title=F("challenge__title"), points=F("challenge__points")).select_related("challenge", "solved_by").filter(**filter)
