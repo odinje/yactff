@@ -7,10 +7,11 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from web.models import Page, Category, Challenge, Submission, Team
 from django.conf import settings
 from web.forms import TeamCreateForm, UserCreationForm, UserChangeForm
+from web.decorator import team_required, not_in_team, anonymous_required
 
 
 
-@user_passes_test(lambda u: not u.is_authenticated, login_url="index", redirect_field_name=None)
+@anonymous_required
 def signup(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
@@ -100,8 +101,7 @@ def user_profile(request):
             })
 
 
-@user_passes_test(lambda u: u.have_team(), login_url="user_profile", redirect_field_name=None)
-@login_required  
+@team_required
 def team_profile(request):
     team = request.user.team
     challenges = Submission.objects.get_solved(team=team)
@@ -129,8 +129,7 @@ def public_team_profile(request, id):
             })
 
 
-@user_passes_test(lambda u: not u.have_team(), login_url="team_profile", redirect_field_name=None)
-@login_required
+@not_in_team
 def team_create(request):
     user = request.user
     if request.method == "POST":
@@ -150,8 +149,7 @@ def team_create(request):
             })
 
 
-@user_passes_test(lambda u: not u.have_team(), login_url="team_profile", redirect_field_name=None)
-@login_required  # TODO: REDO, maybe implment in form so it is possible to use form features
+@not_in_team  # TODO: Rethink or redo
 def team_join(request):
     user = request.user
     if request.method == "POST":
