@@ -29,6 +29,9 @@ def not_in_team(user=None):
 
 
 
-def anonymous_required(u):
-    return user_passes_test(lambda u: not u.is_authenticated,
-            login_url="index", redirect_field_name=None)
+def anonymous_required(user):
+    decorator =  user_passes_test(lambda u: not u.is_authenticated,
+                                  login_url="index", redirect_field_name=None)
+    if user:
+        return decorator(user)
+    return decorator
