@@ -9,8 +9,7 @@ from web.forms import TeamCreateForm, UserCreationForm
 
 
 
-@user_passes_test(lambda u: not u.is_authenticated, login_url="index",
-        redirect_field_name=None)
+@user_passes_test(lambda u: not u.is_authenticated, login_url="index", redirect_field_name=None)
 def signup(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
@@ -49,17 +48,19 @@ def challenges(request):
     categories = Category.objects.all()
 
     challenges = Challenge.objects.with_solves(team=request.user.team_id)
-    return render(request, "web/challenges.html", {"challenges": challenges,
-                                                   "categories": categories})
+    return render(request, "web/challenges.html", 
+            {
+                "challenges": challenges,
+                "categories": categories
+            })
 
 
 @login_required
 def challenge(request, id):
     user = request.user
     team_id = user.team_id
-
     challenge = Challenge.objects.with_solves(team=team_id, challenge=id)
-
+    
     if request.method == "POST":
         if "flag" in request.POST:
             flag = request.POST["flag"]
@@ -71,15 +72,13 @@ def challenge(request, id):
     return render(request, "web/challenge.html", {"challenge": challenge})
 
 
-@login_required
 def scoreboard(request):
     return render(request, "web/scoreboard.html")
 
-@login_required
+
 def api_scoreboard(request):
     scores = Team.objects.scoreboard()
-    return JsonResponse(scores, safe=False)    
-
+    return JsonResponse(scores, safe=False)
 
 
 @login_required
@@ -90,18 +89,36 @@ def user_profile(request):
     return render(request, "web/user_profile.html", {"challenges": challenges})
 
 
-@user_passes_test(lambda u: u.have_team(), login_url="user_profile",
-        redirect_field_name=None)
+@user_passes_test(lambda u: u.have_team(), login_url="user_profile", redirect_field_name=None)
 @login_required  
 def team_profile(request):
     team = request.user.team
-    max_team_size = settings.MAX_TEAM_SIZE
     challenges = Submission.objects.get_solved(team=team)
-    return render(request, "web/team_profile.html", {"team": team, "team_view": True, "max_team_size": max_team_size, "challenges": challenges})
+    return render(request, "web/team_profile.html", 
+            {
+                "team": team, 
+                "team_view": True, 
+                "max_team_size": settings.MAX_TEAM_SIZE, 
+                "challenges": challenges
+            })
 
 
-@user_passes_test(lambda u: not u.have_team(), login_url="team_profile",
-        redirect_field_name=None)
+def public_team_profile(request, id):
+    team = get_or_none(Team, id=id)
+    if not team:
+        raise Http404
+    
+    challenges = Submission.objects.get_solved(team=team)
+    return render(request, "web/team_profile.html", 
+            {
+                "team": team,
+                "team_view": False,
+                "max_team_size": None,
+                "challenges": challenges,
+            })
+
+
+@user_passes_test(lambda u: not u.have_team(), login_url="team_profile", redirect_field_name=None)
 @login_required
 def team_create(request):
     user = request.user
@@ -115,13 +132,14 @@ def team_create(request):
             return redirect("team_profile")
     else:
         form = TeamCreateForm()
-    max_team_size = settings.MAX_TEAM_SIZE
-    return render(request, "web/team_create.html", {"form": form,
-                    "max_team_size": max_team_size})
+    return render(request, "web/team_create.html",
+            {
+                "form": form,
+                "max_team_size": settings.MAX_TEAM_SIZE
+            })
 
 
-@user_passes_test(lambda u: not u.have_team(), login_url="team_profile",
-        redirect_field_name=None)
+@user_passes_test(lambda u: not u.have_team(), login_url="team_profile", redirect_field_name=None)
 @login_required  # TODO: REDO, maybe implment in form so it is possible to use form features
 def team_join(request):
     user = request.user

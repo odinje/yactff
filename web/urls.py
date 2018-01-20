@@ -14,6 +14,7 @@ urlpatterns = [
     path("user/logout", auth_views.logout, {'next_page': '/'}, name='logout'),
     path("user/profile", views.user_profile, name="user_profile"),
     path("team/profile", views.team_profile, name="team_profile"),
+    path("team/<int:id>", views.public_team_profile, name="public_team_profile"),
     path("team/join", views.team_join, name="team_join"),
     path("team/create", views.team_create, name="team_create")
 ]

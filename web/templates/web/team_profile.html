@@ -12,8 +12,8 @@
         <li>{{member.nickname}}</li>
         {% endfor %}
       </ul>
-      <hr />
       {% if team_view %}
+      <hr />
       <p>{{ members|length }} of {{max_team_size }} team members.</p>
       <p><b>Team token:</b> {{ team.token }}</p>
       {% endif %}
