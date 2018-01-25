@@ -62,11 +62,8 @@ def challenge(request, id):
     user = request.user
     team_id = user.team_id
     challenge = Challenge.objects.with_solves(team=team_id, challenge=id)
-    have_team = False
     
-    if team_id:
-        have_team = True
-    if request.method == "POST" and have_team:
+    if request.method == "POST" and team_id:
         if "flag" in request.POST:
             flag = request.POST["flag"]
             if challenge.is_flag(flag):
@@ -74,7 +71,7 @@ def challenge(request, id):
                 solved.save()
                 challenge.is_solved = True
 
-    return render(request, "web/challenge.html", {"have_team": have_team, "challenge": challenge})
+    return render(request, "web/challenge.html", {"challenge": challenge})
 
 
 def scoreboard(request):
