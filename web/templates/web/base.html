@@ -12,20 +12,24 @@
 <link rel="stylesheet" href={% static "web/css/yactff.css" %}> 
 <script src={% static "web/js/utils.js" %}></script>
 </head>
+  <script>
+    $(document).ready(function() {
+      $.each($('#navbar').find('li'), function() {
+        $(this).toggleClass('active', 
+            window.location.pathname.indexOf($(this).find('a').attr('href')) > -1);
+      }); 
+    });
+  </script>
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <a href="/" class="navbar-brand">{{ ctf_name }}</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-   <div class="collapse navbar-collapse" id="navbarNavDropdown">
+   <div class="collapse navbar-collapse" id="navbar">
     <ul class="navbar-nav mr-auto">
         {% for page, link in pages %}
-            {% if request.path|cut:"/" == link|cut:"/" %}
-            <li class="active nav-item"><a class="nav-link" href={{ link }}>{{ page }}</a></li>
-            {% else %}
             <li class="nav-item"><a class="nav-link" href={{ link }}>{{ page }}</a></li>
-            {% endif %}
         {% endfor %}
       </ul>
     <ul class="nav navbar-nav ml-auto">
@@ -40,7 +44,6 @@
               <div class="dropdown-divider"></div>
               <a class="dropdown-item" href="/user/logout">Logout</a>
           </div>
-          {# Generete one query to mutch, will be mitigated if User/Player class by encdeing custom class #}
       </li>
       {% else %}
       <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
