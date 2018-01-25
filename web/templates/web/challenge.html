@@ -16,7 +16,7 @@
     <form method="post">
       {% csrf_token %}
     <div class="input-group">
-      <input type="text" class="form-control"  name="flag" {% if challenge.is_solved %} placeholder="Solved!" disabled {% else %} placeholder="flag{...}" {% endif %}> <!--Add possiblity to dynamic flag format, maybe in settings.py-->
+      <input type="text" class="form-control"  name="flag" {% if have_team %} {% if challenge.is_solved %} placeholder="Solved!" disabled {% else %} placeholder="flag{...}" {% endif %} {% else %} placeholder="Join team to submit" disabled {% endif %}> <!--Add possiblity to dynamic flag format, maybe in settings.py-->
     {% if not challenge.is_solved %}
     <span class="input-group-btn">
     <button class="btn btn-secondary" type="submit">Submit!</button>

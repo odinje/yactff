@@ -4,7 +4,8 @@ from django.contrib.auth.base_user import AbstractBaseUser
 from django.core.mail import send_mail
 from django.contrib.auth.models import PermissionsMixin
 from django.utils.translation import ugettext_lazy as _
-from web.managers import UserManager, ChallengeManger, SubmissionManager, TeamManager
+from web.managers import UserManager, ChallengeManger, SubmissionManager
+from django.db.models import F, Sum
 import glob
 import uuid
 
@@ -52,8 +53,6 @@ class Team(models.Model):
     logo = models.ImageField(upload_to="team/logo/", max_length=255, blank=True) 
     token = models.UUIDField(default=uuid.uuid4, editable=False)
     
-    objects = TeamManager()
-
     def _str_(self):
         return self.name
 
@@ -137,3 +136,9 @@ def load_local_pages():
 
             with open(file, "r") as f:
                 Page.objects.get_or_create(name=name.lower(), type=type[0], content=f.read())
+
+
+
+def get_scoreboard():
+    scores = Submission.objects.values(team_id=F("team__id"), team_name=F("team__name")).annotate(team_score=Sum("challenge__points"))
+    return list(scores)

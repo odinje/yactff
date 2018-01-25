@@ -4,7 +4,7 @@ from web.utils import get_or_none
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.decorators import login_required, user_passes_test
-from web.models import Page, Category, Challenge, Submission, Team
+from web.models import Page, Category, Challenge, Submission, Team, get_scoreboard 
 from django.conf import settings
 from web.forms import TeamCreateForm, UserCreationForm, UserChangeForm
 from web.decorator import team_required, not_in_team, anonymous_required
@@ -62,8 +62,11 @@ def challenge(request, id):
     user = request.user
     team_id = user.team_id
     challenge = Challenge.objects.with_solves(team=team_id, challenge=id)
+    have_team = False
     
-    if request.method == "POST":
+    if team_id:
+        have_team = True
+    if request.method == "POST" and have_team:
         if "flag" in request.POST:
             flag = request.POST["flag"]
             if challenge.is_flag(flag):
@@ -71,7 +74,7 @@ def challenge(request, id):
                 solved.save()
                 challenge.is_solved = True
 
-    return render(request, "web/challenge.html", {"challenge": challenge})
+    return render(request, "web/challenge.html", {"have_team": have_team, "challenge": challenge})
 
 
 def scoreboard(request):
@@ -79,7 +82,7 @@ def scoreboard(request):
 
 
 def api_scoreboard(request):
-    scores = Team.objects.scoreboard()
+    scores = get_scoreboard()
     return JsonResponse(scores, safe=False)
 
 
@@ -113,7 +116,7 @@ def team_profile(request):
                 "challenges": challenges
             })
 
-
+@login_required
 def public_team_profile(request, id):
     team = get_or_none(Team, id=id)
     if not team:

@@ -73,13 +73,4 @@ class SubmissionManager(models.Manager):
         except:
             return None
 
-    def scoreboard(self):
-        return self.select_related("team").annotate(score=Sum("challenge__points"))
-        #return submission.objects.values("team").aggregate(score=Sum("challenge__points"))
 
-
-class TeamManager(models.Manager):
-    def scoreboard(self):
-        submission = apps.get_model("web.Submission")
-        scores = submission.objects.values(team_id=F("team__id"), team_name=F("team__name")).annotate(team_score=Sum("challenge__points"))
-        return list(scores)
