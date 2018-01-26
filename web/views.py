@@ -1,10 +1,9 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import Http404, HttpResponse, JsonResponse
-from web.utils import get_or_none
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.decorators import login_required, user_passes_test
-from web.models import Page, Category, Challenge, Submission, Team, get_scoreboard 
+from web.models import Page, Category, Challenge, Submission, Team, get_scoreboard
 from django.conf import settings
 from web.forms import TeamCreateForm, UserCreationForm, UserChangeForm
 from web.decorator import team_required, not_in_team, anonymous_required
@@ -31,28 +30,23 @@ def page(request, path=None):
     user = request.user
     template = "web/admin_page.html" if user.is_superuser else "web/page.html"
     name = path.split("/")[-1] if path else "index"
-
-    page = get_or_none(Page, name=name)
-    if page:
-        context = {"body": page.content,
-                   "type": page.type}
-        return render(request, template, context)
-    elif page is None and name == "index":
-        context = {"body": "<h3>Index page is empty</h3>",
-                   "type": "html"}
-        return render(request, template, context)
-    else:
-        raise Http404
+    page = get_object_or_404(Page, name=name)
+    
+    return render(request, template,
+            {
+                "body": page.content,
+                "type": page.type,
+            })
 
 
 @login_required
 def challenges(request):
     categories = Category.objects.all()
-
     challenges = Challenge.objects.with_solves(team=request.user.team_id)
+   
     return render(request, "web/challenges.html", 
-            {
-                "challenges": challenges,
+            { 
+                "challenges": challenges, 
                 "categories": categories
             })
 
@@ -113,13 +107,12 @@ def team_profile(request):
                 "challenges": challenges
             })
 
+
 @login_required
 def public_team_profile(request, id):
-    team = get_or_none(Team, id=id)
-    if not team:
-        raise Http404
-    
+    team = get_object_or_404(Team, id=id)
     challenges = Submission.objects.get_solved(team=team)
+
     return render(request, "web/team_profile.html", 
             {
                 "team": team,
@@ -142,6 +135,7 @@ def team_create(request):
             return redirect("team_profile")
     else:
         form = TeamCreateForm()
+
     return render(request, "web/team_create.html",
             {
                 "form": form,
