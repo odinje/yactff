@@ -28,19 +28,19 @@ def signup(request):
 
 
 def page(request, path=None):
-    if path:
-        name = path.split("/")[-1]
-    else:
-        name = "index"
+    user = request.user
+    template = "web/admin_page.html" if user.is_superuser else "web/page.html"
+    name = path.split("/")[-1] if path else "index"
+
     page = get_or_none(Page, name=name)
     if page:
         context = {"body": page.content,
                    "type": page.type}
-        return render(request, "web/page.html", context)
+        return render(request, template, context)
     elif page is None and name == "index":
         context = {"body": "<h3>Index page is empty</h3>",
                    "type": "html"}
-        return render(request, "web/page.html", context)
+        return render(request, template, context)
     else:
         raise Http404
 

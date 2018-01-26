@@ -23,13 +23,14 @@
       <h3>Solved challenges</h3>
       {% if challenges %}
       <table class="table table-sm table-striped">
-        <tbody>
+        <thead>
           <tr>
             <th>Challenge:</th>
             <th>Points:</th>
             <th>Solved by:</th>
             <th>Time:</th>
           <tr>
+        </thead>
           {% for challenge in challenges %}
           <tr>
             <td>{{ challenge.title }}</td>

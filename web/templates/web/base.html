@@ -57,7 +57,9 @@
   Activate account
 </div> 
 {% endif %}
+  
   <div class="container mt-5">
+    {% block admin_content %}{% endblock %}
     {% block content %}{% endblock %}
   </div>
 

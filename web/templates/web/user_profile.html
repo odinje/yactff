@@ -33,12 +33,14 @@
                             <h5 class="mt-2"><span class="fa fa-clock-o ion-clock float-right"></span> Solved challenges</h5>
                             {% if challenges %}
                             <table class="table table-sm table-striped">
-                              <tbody>                                    
+                              <thead>                                    
                                 <tr>
                                   <th>Challenge:</th>
                                   <th>Points:</th>
                                   <th>Time</th>
                                 <tr>
+                              </thead>
+                              <tbody>
                                 {% for challenge in challenges %}
                                 <tr>
                                   <td>{{ challenge.title }}</td>
