@@ -5,7 +5,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from web.models import Page, Category, Challenge, Submission, Team, get_scoreboard
 from django.conf import settings
-from web.forms import TeamCreateForm, UserCreationForm, UserChangeForm
+from web.forms import TeamCreateForm, UserCreationForm, UserChangeForm, AdminPageForm
 from web.decorator import team_required, not_in_team, anonymous_required
 
 
@@ -28,16 +28,24 @@ def signup(request):
 
 def page(request, path=None):
     user = request.user
-    template = "web/admin_page.html" if user.is_superuser else "web/page.html"
     name = path.split("/")[-1] if path else "index"
     page = get_object_or_404(Page, name=name)
+    context = {}
+    if user.is_superuser:
+        if request.method == "POST":
+            form = AdminPageForm(request.POST, instance=page)
+            if form.is_valid():
+                page = form.save()
+        else:
+            form = AdminPageForm(instance=page)
+        template = "web/admin_page.html" 
+        context["form"] = form
+    else: 
+        template = "web/page.html"
     
-    return render(request, template,
-            {
-                "body": page.content,
-                "type": page.type,
-            })
-
+    context["body"] = page.content
+    context["type"] = page.type
+    return render(request, template, context)
 
 @login_required
 def challenges(request):

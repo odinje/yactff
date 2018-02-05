@@ -1,11 +1,15 @@
 from django import forms
-from web.models import Team, User
+from web.models import Team, User, Page
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
+from yactff.widgets import CodeMirrorWidget
+
+
 
 class TeamCreateForm(forms.ModelForm):
     class Meta:
         model = Team
         fields = ["name", "logo"]
+
 
 class UserCreationForm(forms.ModelForm):
     """A form for creating new users. Includes all the required
@@ -39,3 +43,11 @@ class UserChangeForm(forms.ModelForm):
         model = User
         fields = ("email", "nickname",)
 
+
+class AdminPageForm(forms.ModelForm):
+    class Meta:
+        model = Page
+        fields = ("name", "type", "in_menu", "content")
+        widgets = {
+            "content": CodeMirrorWidget(attrs={'style': 'width: 90%; height: 100%;'}),
+        }

@@ -67,7 +67,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'web.apps.WebConfig',
     'debug_toolbar',
-#    'web',
 ]
 
 MIDDLEWARE = [
