@@ -1,8 +1,6 @@
 from django import forms
-from web.models import Team, User, Page
-from django.contrib.auth.forms import ReadOnlyPasswordHashField
+from web.models import Team, User, Page, Challenge, Category
 from yactff.widgets import CodeMirrorWidget
-
 
 
 class TeamCreateForm(forms.ModelForm):
@@ -51,3 +49,25 @@ class AdminPageForm(forms.ModelForm):
         widgets = {
             "content": CodeMirrorWidget(attrs={'style': 'width: 90%; height: 100%;'}),
         }
+
+
+class AdminChallengeForm(forms.ModelForm):
+    class Meta:
+        model = Challenge
+        fields = ("__all__")
+        widgets = {
+            "description": CodeMirrorWidget(attrs={'style': 'width: 90%; height: 100%;'}),
+        }
+
+
+class AdminCategoryForm(forms.ModelForm):
+    name = forms.CharField(required=False)
+    delete = forms.BooleanField(
+        initial=False,
+        required=False,
+        help_text=('Check this to delete this object')
+    )
+
+    class Meta:
+        model = Category
+        fields = ("name",)

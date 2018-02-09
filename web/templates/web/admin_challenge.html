@@ -1,0 +1,9 @@
+  
+{% extends "web/challenge.html" %}
+
+{% block admin_content %}
+<p class="text-right"><a href="#exampleModal" data-toggle="modal" data-target="#exampleModal">Edit</a>
+<a href="{% url "challenge_add" %}">Add challenge</a></p>
+<!-- Modal -->
+{% include "web/admin_modal_edit.html" %}
+{% endblock %}

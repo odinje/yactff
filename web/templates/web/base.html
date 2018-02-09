@@ -28,8 +28,8 @@
   </button>
    <div class="collapse navbar-collapse" id="navbar">
     <ul class="navbar-nav mr-auto">
-        {% for page, link in pages %}
-            <li class="nav-item"><a class="nav-link" href={{ link }}>{{ page }}</a></li>
+        {% for p, link in pages_navbar %}
+            <li class="nav-item"><a class="nav-link" href={{ link }}>{{ p }}</a></li>
         {% endfor %}
       </ul>
     <ul class="nav navbar-nav ml-auto">

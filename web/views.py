@@ -2,12 +2,13 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import Http404, HttpResponse, JsonResponse
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import PasswordChangeForm
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import login_required
 from web.models import Page, Category, Challenge, Submission, Team, get_scoreboard
 from django.conf import settings
-from web.forms import TeamCreateForm, UserCreationForm, UserChangeForm, AdminPageForm
-from web.decorator import team_required, not_in_team, anonymous_required
-
+from web.forms import TeamCreateForm, UserCreationForm, UserChangeForm, AdminPageForm, AdminChallengeForm, AdminCategoryForm
+from web.decorator import team_required, not_in_team, anonymous_required, admin_required
+from web.utils import random_string
+from web.utils import delete_page_file
 
 
 @anonymous_required
@@ -33,30 +34,74 @@ def page(request, path=None):
     context = {}
     if user.is_superuser:
         if request.method == "POST":
+            old_name = page.name
+            old_type = page.type
             form = AdminPageForm(request.POST, instance=page)
             if form.is_valid():
                 page = form.save()
+                if old_name != page.name:
+                    delete_page_file(old_name, old_type)
+                    return redirect("page", path=page.name)
         else:
             form = AdminPageForm(instance=page)
-        template = "web/admin_page.html" 
+        pages = Page.objects.all()
+        template = "web/admin_page.html"
         context["form"] = form
-    else: 
+        context["pages"] = pages
+    else:
         template = "web/page.html"
-    
-    context["body"] = page.content
-    context["type"] = page.type
+
+    context["page"] = page
     return render(request, template, context)
+
+
+@admin_required
+def page_add(request):
+    page_name = random_string()
+    try:
+        Page.objects.create(name=page_name, content="Text Here")
+        return redirect("page", path=page_name)
+    except:
+        raise Http404  # Change to more useful return code
+
+
+@admin_required
+def page_remove(request, id):
+    page = get_object_or_404(Page, id=id)
+    if page.name != "index":  # Cannot delete index, maybe give value error?
+        page.delete()
+    return redirect("index")
+
 
 @login_required
 def challenges(request):
+    user = request.user
     categories = Category.objects.all()
-    challenges = Challenge.objects.with_solves(team=request.user.team_id)
-   
-    return render(request, "web/challenges.html", 
-            { 
-                "challenges": challenges, 
-                "categories": categories
-            })
+    challenges = Challenge.objects.with_solves(team=user.team_id)
+    context = {}
+    if user.is_superuser:
+        template = "web/admin_challenges.html"
+        if request.method == "POST":
+            form = [AdminCategoryForm(request.POST, instance=category, prefix=category.name) for category in categories]
+            form.append(AdminCategoryForm(request.POST, prefix="new_category"))
+            for pos, f in enumerate(form):
+                if f.is_valid():
+                    if pos == len(form)-1 and f.cleaned_data["name"] == "":
+                        break
+                    elif f.cleaned_data["delete"]:
+                        f.instance.delete()
+                    else:
+                        f.save()
+        else:
+            form = [AdminCategoryForm(instance=category, prefix=category.name) for category in categories]
+            form.append(AdminCategoryForm(prefix="new_category"))
+        context["form"] = form
+    else:
+        template = "web/challenges.html"
+    context["challenges"] = challenges
+    context["categories"] = categories
+
+    return render(request, template, context)
 
 
 @login_required
@@ -64,7 +109,21 @@ def challenge(request, id):
     user = request.user
     team_id = user.team_id
     challenge = Challenge.objects.with_solves(team=team_id, challenge=id)
-    
+    context = {}
+    if user.is_superuser:
+        template = "web/admin_challenge.html"
+        if request.method == "POST":
+            form = AdminChallengeForm(request.POST, instance=challenge)
+            if form.is_valid():
+                form.save()
+        else:
+            form = AdminChallengeForm(instance=challenge)
+        context["form"] = form
+    else:
+        template = "web/challenge.html"
+        if not challenge.is_active:
+            raise Http404
+    context["challenge"] = challenge
     if request.method == "POST" and team_id:
         if "flag" in request.POST:
             flag = request.POST["flag"]
@@ -73,14 +132,25 @@ def challenge(request, id):
                 solved.save()
                 challenge.is_solved = True
 
-    return render(request, "web/challenge.html", {"challenge": challenge})
+    return render(request, template, context)
+
+
+@admin_required
+def challenge_add(request):
+    challenge_name = random_string()
+    #try:
+    first_category = Category.objects.filter()[:1].get()
+    challenge = Challenge.objects.create(title=challenge_name, category=first_category, author=request.user)
+    return redirect("challenge", id=challenge.id)
+    #except:
+    #    raise Http404  # Change to more useful return code
 
 
 def scoreboard(request):
     return render(request, "web/scoreboard.html")
 
 
-def api_scoreboard(request):
+def api_scoreboard(request):  # TODO: change to scoreboard_json
     scores = get_scoreboard()
     return JsonResponse(scores, safe=False)
 

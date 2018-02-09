@@ -1,6 +1,11 @@
 (function(){
-  var type = document.getElementById('id_type').value;
-  if (type == 'html') {
+  try {
+    var type = document.getElementById('id_type').value;
+  }
+  catch(er) { // Hack since only pages have types
+    var type = "markdown";
+  }
+  if (type.value == 'html') {
     var codemirror_mode = 'htmlmixed';
   } else {
     var codemirror_mode = 'markdown';

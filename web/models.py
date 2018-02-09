@@ -1,12 +1,11 @@
 from django.db import models
-from django.conf import settings
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.core.mail import send_mail
 from django.contrib.auth.models import PermissionsMixin
 from django.utils.translation import ugettext_lazy as _
 from web.managers import UserManager, ChallengeManger, SubmissionManager
 from django.db.models import F, Sum
-import glob
+from web.utils import save_page_file, delete_page_file
 import uuid
 
 # remove description? Need?
@@ -14,23 +13,23 @@ class Category(models.Model):
     name = models.CharField(max_length=50, unique=True)
     description = models.TextField(blank=True)
 
-    def _str_(self):
+    def __str__(self):
         return self.name
 
 
 class Challenge(models.Model):  # Maybe change title -> name
     title = models.CharField(max_length=200, unique=True)
     category = models.ForeignKey("Category", on_delete=models.DO_NOTHING)
-    description = models.TextField()
-    points = models.IntegerField()
-    key = models.CharField(max_length=200)
+    description = models.TextField(blank=True)
+    points = models.IntegerField(default=0)
+    key = models.CharField(max_length=200, default="changeme")
     active = models.BooleanField(default=False)
-    author = models.ForeignKey("User", on_delete=models.DO_NOTHING, blank=True)  # author
+    author = models.ForeignKey("User", on_delete=models.DO_NOTHING)  # author
     file = models.FileField(upload_to="files", blank=True)
 
     objects = ChallengeManger()
 
-    def _str_(self):
+    def __str__(self):
         return self.title
 
     def is_flag(self, flag):
@@ -119,24 +118,17 @@ class Page(models.Model):
             ("html", "html"),
     )
     name = models.CharField(max_length=20, unique=True)
-    type = models.CharField(max_length=4, choices=TYPE_CHOICES)
+    type = models.CharField(max_length=4, choices=TYPE_CHOICES, default="md")
     in_menu = models.BooleanField(default=False)
     content = models.TextField()
 
+    def save(self, *args, **kwargs):
+        save_page_file(self.name, self.type, self.content)
+        super(Page, self).save(*args, **kwargs)
 
-def load_local_pages():
-    '''
-    Then read all local page file, and load it into the database.
-    '''
-    for type in Page.TYPE_CHOICES:
-        files = glob.glob("{0}/*{1}".format(settings.PAGE_DIR, type[0]))
-        for file in files:
-            name = file.split("/")[-1]
-            name = name.split(".")[0]
-
-            with open(file, "r") as f:
-                Page.objects.get_or_create(name=name.lower(), type=type[0], content=f.read())
-
+    def delete(self):
+        delete_page_file(self.name, self.type)
+        super(Page, self).delete()
 
 
 def get_scoreboard():

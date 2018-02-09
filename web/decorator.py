@@ -35,3 +35,10 @@ def anonymous_required(user):
     if user:
         return decorator(user)
     return decorator
+
+def admin_required(user):
+    decorator = user_passes_test(lambda u: u.is_superuser,
+                                 login_url="index", redirect_field_name=None)
+    if user:
+        return decorator(user)
+    return decorator

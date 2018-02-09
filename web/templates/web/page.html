@@ -1,9 +1,9 @@
 {% extends "web/base.html" %}
 {% block content %}
-{% if type == "md" %}
+{% if page.type == "md" %}
   {% load markdown %}
-  {{ body | markdown | safe }}
+  {{ page.content | markdown | safe }}
 {% else %}
-  {{ body | safe }}
+  {{ page.content | safe }}
 {% endif %}
 {% endblock %}

@@ -6,7 +6,7 @@ class WebConfig(AppConfig):
 
     def ready(self):
         try:
-            from web.models import load_local_pages
-            load_local_pages()
+            from web.models import load_page_files
+            load_page_files()
         except:
             pass
