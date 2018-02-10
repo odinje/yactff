@@ -52,7 +52,7 @@ class Team(models.Model):
     logo = models.ImageField(upload_to="team/logo/", max_length=255, blank=True) 
     token = models.UUIDField(default=uuid.uuid4, editable=False)
     
-    def _str_(self):
+    def __str__(self):
         return self.name
 
     def is_solved(self, challenge):

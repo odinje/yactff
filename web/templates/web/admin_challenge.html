@@ -3,7 +3,41 @@
 
 {% block admin_content %}
 <p class="text-right"><a href="#exampleModal" data-toggle="modal" data-target="#exampleModal">Edit</a>
+<a href="#showSubmissions" data-toggle="modal" data-target="#showSubmissions">Show submissions</a>
 <a href="{% url "challenge_add" %}">Add challenge</a></p>
 <!-- Modal -->
+<div class="modal fade" id="showSubmissions" tabindex="-1" role="dialog" aria-labelledby="showSubmissionsLabel" aria-hidden="true">  
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="showSubmissionsLabel">All submissions for {{ challenge.title }}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Team</th>
+              <th>Member</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for s in submissions %}
+            <tr>
+              <td>{{s.team}}</td>
+              <td>{{s.solved_by}}</td>
+              <td>{{s.completed}}</td>
+              <td><a href="{% url "submission_remove" s.id %}" data-confirm="Delete?" class="btn btn-danger confirm-delete" role="button">Delete submission!</a>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
 {% include "web/admin_modal_edit.html" %}
 {% endblock %}

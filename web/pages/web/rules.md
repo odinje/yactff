@@ -1,4 +1,0 @@
-Rules
-=====
-Sweet
-wuut

@@ -3,7 +3,7 @@
 {% block admin_content %}
 <p class="text-right"><a href="#exampleModal" data-toggle="modal" data-target="#exampleModal">Edit</a>  <a href="{% url "page_add" %}">Add page</a>
 {% if page.name != "index" %}
-<a href="{% url "page_remove" page.id %}">Remove page</a>
+<a href="{% url "page_remove" page.id %}" class="confirm-delete">Remove page</a>
 {% endif %}
 <a href="#exampleModal2" data-toggle="modal" data-target="#exampleModal2">Show all pages</a></p>
 <!-- Modal -->

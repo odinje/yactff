@@ -7,6 +7,7 @@ urlpatterns = [
     path("challenges/", views.challenges, name="challenges"),
     path("challenge/<int:id>", views.challenge, name="challenge"),
     path("challenge/action/add", views.challenge_add, name="challenge_add"),
+    path("submission/action/remove/<int:id>", views.submission_remove, name="submission_remove"),
     path("scoreboard/", views.scoreboard, name="scoreboard"),
     path("api/scoreboard/", views.api_scoreboard, name="api_scoreboard"),
     re_path(r"^page/(?P<path>\w+)/$", views.page, name="page"),

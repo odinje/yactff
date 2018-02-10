@@ -119,6 +119,7 @@ def challenge(request, id):
         else:
             form = AdminChallengeForm(instance=challenge)
         context["form"] = form
+        context["submissions"] = Submission.objects.filter(challenge_id=challenge.id)
     else:
         template = "web/challenge.html"
         if not challenge.is_active:
@@ -138,12 +139,20 @@ def challenge(request, id):
 @admin_required
 def challenge_add(request):
     challenge_name = random_string()
-    #try:
-    first_category = Category.objects.filter()[:1].get()
-    challenge = Challenge.objects.create(title=challenge_name, category=first_category, author=request.user)
-    return redirect("challenge", id=challenge.id)
-    #except:
-    #    raise Http404  # Change to more useful return code
+    try:
+        first_category = Category.objects.filter()[:1].get()
+        challenge = Challenge.objects.create(title=challenge_name, category=first_category, author=request.user)
+        return redirect("challenge", id=challenge.id)
+    except:
+        raise Http404  # Change to more useful return code
+
+
+@admin_required
+def submission_remove(request, id):
+    submission = get_object_or_404(Submission, id=id)
+    challenge_id = submission.challenge_id
+    submission.delete()
+    return redirect("challenge", id=challenge_id)
 
 
 def scoreboard(request):
@@ -161,16 +170,21 @@ def user_profile(request):
     team = user.team
     challenges = Submission.objects.get_solved(team=team, user=user)
     if request.method == "POST":
-        pass
+        userdata_form = UserChangeForm(request.POST, instance=user)
+        password_form = PasswordChangeForm(user, request.POST)
+        if userdata_form.is_valid():
+            userdata_form.save()
+        if password_form.is_valid():
+            password_form.save()
     else:
         userdata_form = UserChangeForm(instance=user)
-        password_form =  PasswordChangeForm(user)
-        return render(request, "web/user_profile.html", 
-            {
-                "challenges": challenges,
-                "password_form": password_form,
-                "userdata_form": userdata_form,
-            })
+        password_form = PasswordChangeForm(user)
+    return render(request, "web/user_profile.html",
+        {
+            "challenges": challenges,
+            "password_form": password_form,
+            "userdata_form": userdata_form,
+        })
 
 
 @team_required

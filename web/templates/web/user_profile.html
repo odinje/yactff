@@ -70,10 +70,14 @@
                 {% endif %}
 
                 <div class="tab-pane" id="edit">
-                    <form role="form">
+                  <form role="form" method="POST">{% csrf_token %}
                       {{ userdata_form.as_p }}
-                      <hr> 
+                      <input type="submit" value="Save userdata">
+                    </form>
+                    <hr> 
+                    <form role="form" method="POST">{% csrf_token %}
                       {{ password_form.as_p }}
+                      <input type="submit" value="Save password">
                     </form>
                 </div>
             </div>
