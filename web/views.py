@@ -122,7 +122,7 @@ def challenge(request, id):
         context["submissions"] = Submission.objects.filter(challenge_id=challenge.id)
     else:
         template = "web/challenge.html"
-        if not challenge.is_active:
+        if not challenge.active:  # TODO: Rename active => is_active
             raise Http404
     context["challenge"] = challenge
     if request.method == "POST" and team_id:
