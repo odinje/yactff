@@ -30,7 +30,7 @@
               <td>{{s.team}}</td>
               <td>{{s.solved_by}}</td>
               <td>{{s.completed}}</td>
-              <td><a href="{% url "submission_remove" s.id %}" data-confirm="Delete?" class="btn btn-danger confirm-delete" role="button">Delete submission!</a>
+              <td><a href="{% url "submission_remove" s.id %}" class="btn btn-danger confirm-change" role="button">Delete submission!</a>
             </tr>
           {% endfor %}
           </tbody>

@@ -1,5 +1,6 @@
 from django import forms
 
+
 class CodeMirrorWidget(forms.Textarea):
     def __init__(self, *args, **kwargs):
         super(CodeMirrorWidget, self).__init__(*args, **kwargs)
@@ -19,4 +20,9 @@ class CodeMirrorWidget(forms.Textarea):
             'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.9.0/mode/htmlmixed/htmlmixed.js',
             '/static/web/js/codemirror_init.js'
         )
-        	
+      
+
+class ReadOnlyWidget(forms.widgets.Widget):
+    """Some of these values are read only - just a bit of text..."""
+    def render(self, _, value, attrs=None):
+        return value

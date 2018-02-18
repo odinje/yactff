@@ -3,10 +3,31 @@ from django.http import Http404, HttpResponse, JsonResponse
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.decorators import login_required
-from web.models import Page, Category, Challenge, Submission, Team, get_scoreboard
+from web.models import (
+        Page,
+        Category,
+        Challenge,
+        Submission,
+        Team,
+        get_scoreboard,
+        User
+        )
 from django.conf import settings
-from web.forms import TeamCreateForm, UserCreationForm, UserChangeForm, AdminPageForm, AdminChallengeForm, AdminCategoryForm
-from web.decorator import team_required, not_in_team, anonymous_required, admin_required
+from web.forms import (
+        TeamCreateForm,
+        UserCreationForm,
+        UserChangeForm,
+        AdminPageForm,
+        AdminChallengeForm,
+        AdminCategoryForm,
+        AdminUserChangeForm
+        )
+from web.decorator import (
+        team_required,
+        not_in_team,
+        anonymous_required,
+        admin_required
+        )
 from web.utils import random_string
 from web.utils import delete_page_file
 
@@ -86,12 +107,14 @@ def challenges(request):
             form.append(AdminCategoryForm(request.POST, prefix="new_category"))
             for pos, f in enumerate(form):
                 if f.is_valid():
+                    print(pos)
                     if pos == len(form)-1 and f.cleaned_data["name"] == "":
                         break
                     elif f.cleaned_data["delete"]:
                         f.instance.delete()
                     else:
                         f.save()
+            return redirect("challenges")
         else:
             form = [AdminCategoryForm(instance=category, prefix=category.name) for category in categories]
             form.append(AdminCategoryForm(prefix="new_category"))
@@ -159,7 +182,7 @@ def scoreboard(request):
     return render(request, "web/scoreboard.html")
 
 
-def api_scoreboard(request):  # TODO: change to scoreboard_json
+def scoreboard_json(request):  # TODO: change to scoreboard_json
     scores = get_scoreboard()
     return JsonResponse(scores, safe=False)
 
@@ -191,11 +214,11 @@ def user_profile(request):
 def team_profile(request):
     team = request.user.team
     challenges = Submission.objects.get_solved(team=team)
-    return render(request, "web/team_profile.html", 
+    return render(request, "web/team_profile.html",
             {
-                "team": team, 
-                "team_view": True, 
-                "max_team_size": settings.MAX_TEAM_SIZE, 
+                "team": team,
+                "team_view": True,
+                "max_team_size": settings.MAX_TEAM_SIZE,
                 "challenges": challenges
             })
 
@@ -205,7 +228,7 @@ def public_team_profile(request, id):
     team = get_object_or_404(Team, id=id)
     challenges = Submission.objects.get_solved(team=team)
 
-    return render(request, "web/team_profile.html", 
+    return render(request, "web/team_profile.html",
             {
                 "team": team,
                 "team_view": False,
@@ -249,3 +272,23 @@ def team_join(request):
         return redirect("team_profile")
     else:
         return HttpResponse(status=405)
+
+
+@admin_required
+def user_all(request):
+    users = User.objects.all()
+
+    return render(request, "web/admin_users.html", {"users": users})
+
+
+@admin_required
+def user_show(request, id):
+    user = User.objects.get(id=id)
+    if request.method == "POST":
+        form = AdminUserChangeForm(request.POST, instance=user)
+        if form.is_valid():
+            user = form.save()
+    else:
+        form = AdminUserChangeForm(instance=user)
+
+    return render(request, "web/admin_user.html", {"target_user": user, "form": form})

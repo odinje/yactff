@@ -1,0 +1,34 @@
+{% extends "web/base.html" %}
+{% block content %}
+<div class="row">
+    <div class="col-md-6 alert alert-info">
+        <h2 class="alert-heading">Meta</h2>
+        <table class="table">
+          <tbody>
+            <tr>
+                <td>IP:</td>
+                <td>127.0.0.1</td>
+            </tr>
+            <tr>
+                <td>Date joined:</td>
+                <td>{{ target_user.date_joined }}</td>
+            </tr>
+            <tr>
+                <td>Last login:</td>
+                <td>{{ target_user.last_login }}</td>
+            </tr>
+            <tr>
+              <td>Superuser / staff:</td>
+                <td>{{ target_user.is_superuser}} / {{ target_user.is_staff }}</td>
+            </tr>
+          </tbody>
+        </table>
+    </div>
+    <div class="col-md-6">
+      <form role="form" method="POST">{% csrf_token %}
+        {{ form.as_p}}
+        <input class="btn btn-success confirm-change" type="submit" value="Save user">
+      </form>
+    </div>
+  </div>
+{% endblock %}

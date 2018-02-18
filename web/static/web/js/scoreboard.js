@@ -1,5 +1,5 @@
 function get_scores() {
-  getJSON('/api/scoreboard/', function(err, data) {
+  getJSON('/scoreboard.json/', function(err, data) {
     var scoreboard = $("#scoreboard");
     scoreboard.empty();
     for (i = data.length -1; i >= 0; i--) {

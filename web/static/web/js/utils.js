@@ -14,6 +14,6 @@ var getJSON = function(url, callback) {
 };
 
 // Confirmation dialog on object deletion
-$(document).on('click', '.confirm-delete', function(){
-    return confirm('Are you sure you want to delete this?');
+$(document).on('click', '.confirm-change', function(){
+    return confirm('Are you sure you want to do this?');
 })

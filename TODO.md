@@ -1,7 +1,6 @@
 TODO list
 ==========
 
-* Add admin user management
 * Adding redis support for session, cache.
 * Celery support for tasks, and for sending out emails.
 * Use django-assets for asset management
