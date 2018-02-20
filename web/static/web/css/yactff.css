@@ -19,3 +19,27 @@
    max-width:1200px;
   }
 }
+
+[class*="challenge"] {
+  padding: 25px;
+  width: 15%;
+  text-align: center;
+  font-size: 24px;
+  background-color: #00509e;
+  color: white;
+	margin-right: 5px;
+  box-sizing: border-box;
+}
+
+
+.challenge:hover {
+color: #f58025;
+}
+
+.challenge-solved {
+  background-color: #f58025;
+}
+
+.challenge-solved:hover {
+color: #00509e;
+}

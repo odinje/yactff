@@ -1,5 +1,5 @@
 from django.conf import settings
-from .models import Page
+from web.models import Page
 
 
 def header(request):
