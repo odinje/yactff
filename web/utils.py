@@ -52,10 +52,18 @@ def save_page_file(name, type, content):
 
 
 def delete_page_file(name, type):
-    path = _page_path(settings.PAGE_DIR, name, type) 
+    path = _page_path(settings.PAGE_DIR, name, type)
     try:
         os.remove(path)
     except OSError as e: # this would be "except OSError, e:" before Python 2.6
         if e.errno != errno.ENOENT: # errno.ENOENT = no such file or directory
             raise # re-raise exception if a different error occurred
 
+
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip

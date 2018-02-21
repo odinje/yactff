@@ -28,8 +28,11 @@ from web.decorator import (
         anonymous_required,
         admin_required
         )
-from web.utils import random_string
-from web.utils import delete_page_file
+from web.utils import (
+        random_string,
+        delete_page_file,
+        get_client_ip,
+        )
 
 
 @anonymous_required
