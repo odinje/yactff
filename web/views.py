@@ -185,7 +185,7 @@ def scoreboard(request):
     return render(request, "web/scoreboard.html")
 
 
-def scoreboard_json(request):  # TODO: change to scoreboard_json
+def scoreboard_json(request):      
     scores = get_scoreboard()
     return JsonResponse(scores, safe=False)
 
