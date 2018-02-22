@@ -90,6 +90,12 @@ TEMPLATES = [
     },
 ]
 
+FILE_UPLOAD_HANDLERS = [
+
+    'django.core.files.uploadhandler.MemoryFileUploadHandler',
+    'django.core.files.uploadhandler.TemporaryFileUploadHandler',
+]
+
 WSGI_APPLICATION = 'yactff.wsgi.application'
 
 
@@ -112,7 +118,7 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR + "/media/"
+MEDIA_ROOT = "{}/web/media/".format(BASE_DIR)
 LOGIN_REDIRECT_URL = 'index'
 CTF_NAME = "Capture Tha Flag"
 MAX_TEAM_SIZE = 5

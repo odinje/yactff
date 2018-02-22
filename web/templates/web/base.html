@@ -22,22 +22,22 @@
     });
   </script>
 <body>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a href="/" class="navbar-brand">{{ ctf_name }}</a>
+  <nav class="navbar yactff navbar-expand-lg">
+    <a href="/" class="navbar-brand">{{ ctf_name }}</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
    <div class="collapse navbar-collapse" id="navbar">
     <ul class="navbar-nav mr-auto">
         {% for p, link in pages_navbar %}
-            <li class="nav-item"><a class="nav-link" href={{ link }}>{{ p }}</a></li>
+        <li class="nav-item"><a class="nav-link" href={{ link }}>{{ p }}</a></li>
         {% endfor %}
       </ul>
     <ul class="nav navbar-nav ml-auto">
       {% if user.is_authenticated %}
       <li class="nav-item">
         <div class="dropdown">
-            <button class="btn btn-link dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <button class="btn btn-link yactff dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               {{user.get_nickname_and_team}}
           </button>
           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -57,9 +57,9 @@
    </div>
   </nav>
 
-{% if False %}
-<div class="alert alert-danger alert-dismissible fade show" role="alert">
-  Activate account
+{% if request.session.info_message %}
+<div class="alert alert-info alert-dismissible fade show" role="alert">
+  {{ request.session.info_message }}
 </div> 
 {% endif %}
   

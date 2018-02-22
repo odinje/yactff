@@ -1,8 +1,16 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import Http404, HttpResponse, JsonResponse
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.decorators import login_required
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.contrib.sites.shortcuts import get_current_site
+from django.utils.encoding import force_bytes, force_text
+from web.tokens import account_activation_token
+from django.core.files.uploadedfile import InMemoryUploadedFile
+import sys
+import hashlib
 from web.models import (
         Page,
         Category,
@@ -31,7 +39,7 @@ from web.decorator import (
 from web.utils import (
         random_string,
         delete_page_file,
-        get_client_ip,
+        create_zip,
         )
 
 
@@ -40,16 +48,40 @@ def signup(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
-            email = form.cleaned_data.get("email")
-            raw_password = form.cleaned_data.get('password1')
-            user = authenticate(email=email, password=raw_password)
-            login(request, user)
+            user = form.save(commit=False)
+            user.is_active = False
+            user.save()
+            current_site = get_current_site(request)
+            mail_subject = "Activate your account for {}".format(settings.CTF_NAME)
+            message = render_to_string("web/user_activate_account_email.html", 
+                    {
+                        "user": user,
+                        "domain": current_site.domain,
+                        "uid": urlsafe_base64_encode(force_bytes(user.pk)).decode("utf-8"),
+                        "token": account_activation_token.make_token(user),
+                    })
+            user.email_user(mail_subject, message)
+            request.session["info_message"] = "Please confirm your email address to complete the registration"
             return redirect("index")
     else:
         form = UserCreationForm()
     return render(request, 'web/signup.html', {'form': form})
 
+
+def user_activate(request, uidb64, token):
+    try:
+        uid = force_text(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+    if user is not None and account_activation_token.check_token(user, token):
+        user.is_active = True
+        user.save()
+        login(request, user)
+        del request.session["info_message"]
+        redirect("index")
+    else:
+        return HttpResponse('Activation link is invalid!')
 
 def page(request, path=None):
     user = request.user
@@ -139,9 +171,14 @@ def challenge(request, id):
     if user.is_superuser:
         template = "web/admin_challenge.html"
         if request.method == "POST":
-            form = AdminChallengeForm(request.POST, instance=challenge)
+            form = AdminChallengeForm(request.POST,  instance=challenge)
+            files = request.FILES.getlist("files")
             if form.is_valid():
-                form.save()
+                files_zip = create_zip(files)
+                new_challenge = form.save(commit=False)
+                #files_zip.seek(0)
+                new_challenge.file = InMemoryUploadedFile(files_zip, None, "{}.zip".format(hashlib.sha256(files_zip.read()).hexdigest()), "application/zip", sys.getsizeof(files_zip), charset=None)
+                new_challenge.save()
         else:
             form = AdminChallengeForm(instance=challenge)
         context["form"] = form

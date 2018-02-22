@@ -8,11 +8,31 @@
 }
 .navbar {
   font-size: large;
+  background-color: #00509e;
+}
+
+.nav-link {
+  color: #ffffff;
+}
+
+.nav-link:hover {
+  color: #f58025;
 }
 
 .navbar-brand {
   font-weight: bold;
+  color: #ffffff;
 }
+
+.navbar-brand:hover {
+  color: #f58025;
+}
+
+.btn-link.yactff {
+  color: #ffffff;
+}
+
+
 @media (min-width: 768px) {
   .modal-lg {
     width: 90%;

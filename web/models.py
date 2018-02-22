@@ -25,7 +25,7 @@ class Challenge(models.Model):  # Maybe change title -> name
     key = models.CharField(max_length=200, default="changeme")
     active = models.BooleanField(default=False)
     author = models.ForeignKey("User", on_delete=models.DO_NOTHING)  # author
-    file = models.FileField(upload_to="files", blank=True)
+    file = models.FileField(blank=True)
 
     objects = ChallengeManger()
 

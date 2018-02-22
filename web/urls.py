@@ -15,6 +15,7 @@ urlpatterns = [
     path("admin/page/action/remove/<int:id>", views.page_remove, name="page_remove"),
     path("login/", auth_views.login, {"template_name": "web/login.html"}, name='login'),
     path("signup/", views.signup, name='signup'),
+    re_path(r"^user/activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$", views.user_activate, name="user_activate"),
     path("user/logout", auth_views.logout, {'next_page': '/'}, name='logout'),
     path("user/profile", views.user_profile, name="user_profile"),
     path("admin/user/all", views.user_all, name="user_all"),

@@ -7,6 +7,8 @@ import errno
 from django.conf import settings
 from django.apps import apps
 from django.core.exceptions import ObjectDoesNotExist
+from io import BytesIO
+from zipfile import ZipFile
 
 logger = logging.getLogger(__name__)
 
@@ -67,3 +69,18 @@ def get_client_ip(request):
     else:
         ip = request.META.get('REMOTE_ADDR')
     return ip
+
+
+def create_zip(files):
+    in_memory = BytesIO()
+    zip = ZipFile(in_memory, "a")
+    
+    for file in files:
+        zip.writestr(file.name, file.read())
+    
+    # fix for Linux zip files read in Windows
+    for file in zip.filelist:
+        file.create_system = 0    
+    zip.close()   
+    return in_memory 
+    

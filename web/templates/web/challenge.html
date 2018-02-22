@@ -9,7 +9,7 @@
     <h4 class="card-title">{{challenge.title}} <span class="badge badge-secondary"> Points: {{challenge.points}}</span></h4>
     <p class="card-text">{{ challenge.description | markdown | safe }}<p>
     {% if challenge.file %}
-    <p class="card-text"><a href="{{challenge.file.url}}">{{challenge.file}}</a></p>
+    <p class="card-text"><a href="{{challenge.file.url}}">{{challenge.file.name}}</a></p>
     {% endif %}
   </div>
   <div class="card-body">

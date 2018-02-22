@@ -37,12 +37,15 @@ class AdminPageForm(forms.ModelForm):
 
 
 class AdminChallengeForm(forms.ModelForm):
+    files = forms.FileField(widget=forms.FileInput(attrs={'multiple': True}), required=False)
+
     class Meta:
         model = Challenge
-        fields = ("__all__")
+        exclude = ["file"]
         widgets = {
             "description": CodeMirrorWidget(attrs={'style': 'width: 90%; height: 100%;'}),
         }
+
 
 
 class AdminCategoryForm(forms.ModelForm):
