@@ -8,7 +8,6 @@
       <th scope="col">Email</th>
       <th scope="col">Team</th>
       <th scope="col">IP</th>
-      <th scope="col">Reset</th>
       <th scope="col">More</th>
     </tr>
   </thead>
@@ -20,7 +19,6 @@
       <td>{{ user.email }}</td>
       <td>{{ user.team }}</td>
       <td>{{ user.last_ip }}</td>
-      <td><a class="btn btn-primary btn-sm" href="#" role="button">Reset password</a></td>
       <td><a class="btn btn-primary btn-sm" href="{% url "user_show" user.id%}" role="button">Show</a></td>
     </tr>
     {% endfor %}

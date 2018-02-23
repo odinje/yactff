@@ -22,6 +22,15 @@ class UserChangeForm(forms.ModelForm):
         fields = ("email", "nickname", "first_name", "last_name")
 
 
+class UserRequestPasswordResetForm(forms.Form):
+    email = forms.EmailField()
+
+
+class UserPasswordResetForm(_UserCreationForm):
+    class Meta(_UserCreationForm.Meta):
+        model = User
+        fields = ()
+
 class AdminUserChangeForm(UserChangeForm):
     class Meta(UserChangeForm.Meta):
         fields = ("email", "nickname", "first_name", "last_name", "team", "is_active")
@@ -45,7 +54,6 @@ class AdminChallengeForm(forms.ModelForm):
         widgets = {
             "description": CodeMirrorWidget(attrs={'style': 'width: 90%; height: 100%;'}),
         }
-
 
 
 class AdminCategoryForm(forms.ModelForm):

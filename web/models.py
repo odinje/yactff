@@ -6,6 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 from web.managers import UserManager, ChallengeManger, SubmissionManager
 from django.db.models import F, Sum
 from web.utils import save_page_file, delete_page_file
+from celery.decorators import task
 import uuid
 
 # remove description? Need?
@@ -103,11 +104,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         else:
             return self.nickname
 
-    def email_user(self, subject, message, from_email=None, **kwargs):
-        '''
-        Sends an email to this User.
-        '''
-        send_mail(subject, message, from_email, [self.email], **kwargs)
 
     def have_team(self):
         return True if self.team else False
@@ -135,3 +131,12 @@ class Page(models.Model):
 def get_scoreboard():
     scores = Submission.objects.values(team_id=F("team__id"), team_name=F("team__name")).annotate(team_score=Sum("challenge__points"))
     return list(scores)
+
+
+@task()
+def email_user(user_id, subject, message, from_email=None, **kwargs):
+    '''
+    Sends an email to this User.
+    '''
+    email = User.objects.get(id=user_id)
+    send_mail(subject, message, from_email, [email], **kwargs)

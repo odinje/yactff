@@ -18,6 +18,8 @@ urlpatterns = [
     re_path(r"^user/activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$", views.user_activate, name="user_activate"),
     path("user/logout", auth_views.logout, {'next_page': '/'}, name='logout'),
     path("user/profile", views.user_profile, name="user_profile"),
+    path("user/password/reset", views.user_password_reset, name="user_password_reset"),
+    re_path(r"^user/password/reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$", views.user_password_reset_confirm, name="user_password_reset_confirm"),
     path("admin/user/all", views.user_all, name="user_all"),
     path("admin/user/<int:id>", views.user_show, name="user_show"),
     path("team/profile", views.team_profile, name="team_profile"),
@@ -25,3 +27,6 @@ urlpatterns = [
     path("team/join", views.team_join, name="team_join"),
     path("team/create", views.team_create, name="team_create")
 ]
+
+
+#http://garmoncheg.blogspot.no/2012/07/django-resetting-passwords-with.html

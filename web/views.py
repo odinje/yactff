@@ -7,7 +7,7 @@ from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_text
-from web.tokens import account_activation_token
+from web.tokens import account_token
 from django.core.files.uploadedfile import InMemoryUploadedFile
 import sys
 import hashlib
@@ -18,6 +18,7 @@ from web.models import (
         Submission,
         Team,
         get_scoreboard,
+        email_user,
         User
         )
 from django.conf import settings
@@ -25,6 +26,8 @@ from web.forms import (
         TeamCreateForm,
         UserCreationForm,
         UserChangeForm,
+        UserRequestPasswordResetForm,
+        UserPasswordResetForm,
         AdminPageForm,
         AdminChallengeForm,
         AdminCategoryForm,
@@ -43,6 +46,28 @@ from web.utils import (
         )
 
 
+def _generate_user_token_message(user, domain, template):
+    message = render_to_string(template,
+        {
+            "user": user,
+            "domain": domain,
+            "uid": urlsafe_base64_encode(force_bytes(user.pk)).decode("utf-8"),
+            "token": account_token.make_token(user),
+        })
+    return message
+
+
+def _verify_user_token(uidb64, token):
+    try:
+        uid = force_text(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+    if user is not None and account_token.check_token(user, token):
+        return user
+    return None
+
+
 @anonymous_required
 def signup(request):
     if request.method == 'POST':
@@ -53,14 +78,8 @@ def signup(request):
             user.save()
             current_site = get_current_site(request)
             mail_subject = "Activate your account for {}".format(settings.CTF_NAME)
-            message = render_to_string("web/user_activate_account_email.html", 
-                    {
-                        "user": user,
-                        "domain": current_site.domain,
-                        "uid": urlsafe_base64_encode(force_bytes(user.pk)).decode("utf-8"),
-                        "token": account_activation_token.make_token(user),
-                    })
-            user.email_user(mail_subject, message)
+            message = _generate_user_token_message(user, current_site, "web/user_activate_account_email.html")
+            email_user(user.id, mail_subject, message)
             request.session["info_message"] = "Please confirm your email address to complete the registration"
             return redirect("index")
     else:
@@ -69,12 +88,8 @@ def signup(request):
 
 
 def user_activate(request, uidb64, token):
-    try:
-        uid = force_text(urlsafe_base64_decode(uidb64))
-        user = User.objects.get(pk=uid)
-    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
-        user = None
-    if user is not None and account_activation_token.check_token(user, token):
+    user = _verify_user_token(uidb64, token)
+    if user:
         user.is_active = True
         user.save()
         login(request, user)
@@ -82,6 +97,7 @@ def user_activate(request, uidb64, token):
         redirect("index")
     else:
         return HttpResponse('Activation link is invalid!')
+
 
 def page(request, path=None):
     user = request.user
@@ -222,9 +238,45 @@ def scoreboard(request):
     return render(request, "web/scoreboard.html")
 
 
-def scoreboard_json(request):      
+def scoreboard_json(request):
     scores = get_scoreboard()
     return JsonResponse(scores, safe=False)
+
+
+def user_password_reset(request):
+    if request.method == "POST":
+        form = UserRequestPasswordResetForm(request.POST)
+        if form.is_valid():
+            user = get_object_or_404(User, email=form.cleaned_data["email"])
+            domain = get_current_site(request)
+            email_subject = "Password reset for {}".format(settings.CTF_NAME)
+            message = _generate_user_token_message(user, domain, "web/password_reset_email.html")
+            email_user(user.id, email_subject, message)
+            request.session["info_message"] = "Reset link is sent to your email"
+            return redirect("index")
+    else:
+        form = UserRequestPasswordResetForm()
+    return render(request, "web/password_reset_form.html", {"form": form})
+
+
+def user_password_reset_confirm(request, uidb64, token):
+    template = "web/password_reset_confirm.html"
+    user = _verify_user_token(uidb64, token)
+    context = {}
+    if user:
+        context["validlink"] = True
+        if request.method == "POST":
+            form = UserPasswordResetForm(request.POST, instance=user)
+            if form.is_valid():
+                form.save()
+                login(request, user)
+                return redirect("index")
+        else:
+            form = UserPasswordResetForm()
+        context["form"] = form
+    else:
+        context["validlink"] = False
+    return render(request, template, context)
 
 
 @login_required

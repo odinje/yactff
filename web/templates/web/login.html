@@ -8,6 +8,7 @@
     {% csrf_token %}
     {{ form.as_p }}
     <p> Not registered? <a href={% url "signup" %}>Click here!</a><p>
+    <p> Forgotten password? <a href={% url "user_password_reset" %}>Click here!</a><p>
     <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
   </form>
 {% endblock %}

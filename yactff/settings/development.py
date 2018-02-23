@@ -1,4 +1,7 @@
 from yactff.settings.base import *
+import os
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'yactff.settings.development')
 
 DEBUG = True
 
@@ -23,3 +26,6 @@ DATABASES = {
     }
 }
 
+BROKER_BACKEND = 'memory'
+CELERY_ALWAYS_EAGER = True
+CELERY_EAGER_PROPAGATES_EXCEPTIONS = True
