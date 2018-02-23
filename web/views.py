@@ -176,7 +176,7 @@ def challenge(request, id):
             if form.is_valid():
                 files_zip = create_zip(files)
                 new_challenge = form.save(commit=False)
-                #files_zip.seek(0)
+                files_zip.seek(0)
                 new_challenge.file = InMemoryUploadedFile(files_zip, None, "{}.zip".format(hashlib.sha256(files_zip.read()).hexdigest()), "application/zip", sys.getsizeof(files_zip), charset=None)
                 new_challenge.save()
         else:
