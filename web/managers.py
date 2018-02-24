@@ -44,7 +44,7 @@ class ChallengeManger(models.Manager):
             except:
                 challenges.is_solved = False
         else:
-            challenges = challenges.objects.all()
+            challenges = challenges.objects.all().order_by("points")
             solves = solves.objects.filter(team=team)
 
             for challenge in challenges:

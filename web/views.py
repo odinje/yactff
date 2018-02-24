@@ -152,7 +152,7 @@ def page_remove(request, id):
 def challenges(request):
     user = request.user
     categories = Category.objects.all()
-    challenges = Challenge.objects.with_solves(team=user.team_id).order_by("points")
+    challenges = Challenge.objects.with_solves(team=user.team_id)
     context = {}
     if user.is_superuser:
         template = "web/admin_challenges.html"
