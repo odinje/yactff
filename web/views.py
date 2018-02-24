@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.contrib.sites.shortcuts import get_current_site
+from django.contrib import messages
 from django.utils.encoding import force_bytes, force_text
 from web.tokens import account_token
 from django.core.files.uploadedfile import InMemoryUploadedFile
@@ -43,6 +44,7 @@ from web.utils import (
         random_string,
         delete_page_file,
         create_zip,
+        pause_game as _pause_game,
         )
 
 
@@ -80,7 +82,7 @@ def signup(request):
             mail_subject = "Activate your account for {}".format(settings.CTF_NAME)
             message = _generate_user_token_message(user, current_site, "web/user_activate_account_email.html")
             email_user(user.id, mail_subject, message)
-            request.session["info_message"] = "Please confirm your email address to complete the registration"
+            messages.info(request, "Please confirm your email address to complete the registration")
             return redirect("index")
     else:
         form = UserCreationForm()
@@ -93,10 +95,10 @@ def user_activate(request, uidb64, token):
         user.is_active = True
         user.save()
         login(request, user)
-        del request.session["info_message"]
-        redirect("index")
+        messages.success(request, "Conratulaios! Email is verifed")
     else:
-        return HttpResponse('Activation link is invalid!')
+        messages.error(request, "Activation link is invalid!")
+    return redirect("index")
 
 
 def page(request, path=None):
@@ -189,11 +191,13 @@ def challenge(request, id):
         if request.method == "POST":
             form = AdminChallengeForm(request.POST,  instance=challenge)
             files = request.FILES.getlist("files")
+            print(files)
             if form.is_valid():
-                files_zip = create_zip(files)
                 new_challenge = form.save(commit=False)
-                files_zip.seek(0)
-                new_challenge.file = InMemoryUploadedFile(files_zip, None, "{}.zip".format(hashlib.sha256(files_zip.read()).hexdigest()), "application/zip", sys.getsizeof(files_zip), charset=None)
+                if files:
+                    files_zip = create_zip(files)
+                    files_zip.seek(0)
+                    new_challenge.file = InMemoryUploadedFile(files_zip, None, "{}.zip".format(hashlib.sha256(files_zip.read()).hexdigest()), "application/zip", sys.getsizeof(files_zip), charset=None)
                 new_challenge.save()
         else:
             form = AdminChallengeForm(instance=challenge)
@@ -248,12 +252,15 @@ def user_password_reset(request):
         form = UserRequestPasswordResetForm(request.POST)
         if form.is_valid():
             user = get_object_or_404(User, email=form.cleaned_data["email"])
-            domain = get_current_site(request)
-            email_subject = "Password reset for {}".format(settings.CTF_NAME)
-            message = _generate_user_token_message(user, domain, "web/password_reset_email.html")
-            email_user(user.id, email_subject, message)
-            request.session["info_message"] = "Reset link is sent to your email"
-            return redirect("index")
+            if user.is_active:
+                domain = get_current_site(request)
+                email_subject = "Password reset for {}".format(settings.CTF_NAME)
+                message = _generate_user_token_message(user, domain, "web/password_reset_email.html")
+                email_user(user.id, email_subject, message)
+                messages.info(request, "Password reset link is sent to your email")
+                return redirect("index")
+            else:
+                messages.warning(request, "User is not active. Contact the admin if you want to activate this account")
     else:
         form = UserRequestPasswordResetForm()
     return render(request, "web/password_reset_form.html", {"form": form})
@@ -270,6 +277,7 @@ def user_password_reset_confirm(request, uidb64, token):
             if form.is_valid():
                 form.save()
                 login(request, user)
+                messages.success(request, "Password reset successfull. You are now logged in")
                 return redirect("index")
         else:
             form = UserPasswordResetForm()
@@ -384,3 +392,9 @@ def user_show(request, id):
         form = AdminUserChangeForm(instance=user)
 
     return render(request, "web/admin_user.html", {"target_user": user, "form": form})
+
+
+@admin_required
+def pause_game(request):
+    _pause_game()
+    return redirect("index")

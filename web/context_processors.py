@@ -1,5 +1,6 @@
 from django.conf import settings
 from web.models import Page
+from web.utils import is_game_paused
 
 
 def header(request):
@@ -10,4 +11,4 @@ def header(request):
     for page in obj:
         if page.in_menu:
             pages[page.name.title()] = "/page/" + page.name
-    return {"ctf_name": settings.CTF_NAME, "pages_navbar": sorted(pages.items())}
+    return {"ctf_name": settings.CTF_NAME, "pages_navbar": sorted(pages.items()), "paused": is_game_paused()}

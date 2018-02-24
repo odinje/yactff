@@ -9,8 +9,9 @@ https://docs.djangoproject.com/en/1.11/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.11/ref/settings/
 """
-
 import os
+from django.contrib.messages import constants as messages
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -95,6 +96,14 @@ FILE_UPLOAD_HANDLERS = [
     'django.core.files.uploadhandler.TemporaryFileUploadHandler',
 ]
 
+MESSAGE_TAGS = {
+    messages.DEBUG: 'alert-info',
+    messages.INFO: 'alert-info',
+    messages.SUCCESS: 'alert-success',
+    messages.WARNING: 'alert-warning',
+    messages.ERROR: 'alert-danger',
+}
+
 WSGI_APPLICATION = 'yactff.wsgi.application'
 
 
@@ -120,4 +129,6 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = "{}/web/media/".format(BASE_DIR)
 LOGIN_REDIRECT_URL = 'index'
 CTF_NAME = "Capture Tha Flag"
+#CTF_START = 
+#CTF_STOP = 
 MAX_TEAM_SIZE = 5

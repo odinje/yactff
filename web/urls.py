@@ -13,6 +13,7 @@ urlpatterns = [
     re_path(r"^page/(?P<path>\w+)/$", views.page, name="page"),
     path("admin/page/action/add/", views.page_add, name="page_add"),
     path("admin/page/action/remove/<int:id>", views.page_remove, name="page_remove"),
+    path("admin/game/pause", views.pause_game, name="pause_game"),
     path("login/", auth_views.login, {"template_name": "web/login.html"}, name='login'),
     path("signup/", views.signup, name='signup'),
     re_path(r"^user/activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$", views.user_activate, name="user_activate"),

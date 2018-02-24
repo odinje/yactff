@@ -84,3 +84,21 @@ def create_zip(files):
     zip.close()   
     return in_memory 
     
+
+# TODO: Apply for caching and syncing
+def pause_game():
+    state = os.environ.pop("YACTFF_PAUSED", None)
+    if state is None or state == "true":
+        os.environ["YACTFF_PAUSED"] = "false"
+    else:
+        os.environ["YACTFF_PAUSED"] = "true"
+
+
+def is_game_paused():
+    state = os.environ["YACTFF_PAUSED"]
+    if state == "true":
+        return True
+    else:
+        return False
+
+

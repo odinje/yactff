@@ -46,6 +46,8 @@
               {% if user.is_superuser %}
               <a class="dropdown-item" href={% url "user_all" %}>Users</a>
               <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href={% url "pause_game" %}>{{paused|yesno:"Unpause,Pause"}} game</a>
+              <div class="dropdown-divider"></div>
               {% endif %}
               <a class="dropdown-item" href="/user/logout">Logout</a>
           </div>
@@ -57,10 +59,18 @@
    </div>
   </nav>
 
-{% if request.session.info_message %}
-<div class="alert alert-info alert-dismissible fade show" role="alert">
-  {{ request.session.info_message }}
-</div> 
+{% if paused %}
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+  This game have been paused. Wait for news.
+</div>
+{% endif %}
+
+{% if messages %}
+{% for message in messages %}
+<div class="alert {{message.tags}} alert-dismissible fade show" role="alert">
+  {{message}}
+</div>
+{% endfor %}
 {% endif %}
   
   <div class="container mt-5">
