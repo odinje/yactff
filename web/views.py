@@ -38,7 +38,8 @@ from web.decorator import (
         team_required,
         not_in_team,
         anonymous_required,
-        admin_required
+        admin_required,
+        game_active,
         )
 from web.utils import (
         random_string,
@@ -146,8 +147,8 @@ def page_remove(request, id):
         page.delete()
     return redirect("index")
 
-
 @login_required
+@game_active
 def challenges(request):
     user = request.user
     categories = Category.objects.all()
@@ -181,6 +182,7 @@ def challenges(request):
 
 
 @login_required
+@game_active
 def challenge(request, id):
     user = request.user
     team_id = user.team_id

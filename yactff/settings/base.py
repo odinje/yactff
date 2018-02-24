@@ -112,7 +112,7 @@ WSGI_APPLICATION = 'yactff.wsgi.application'
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "CET"
 
 USE_I18N = True
 
@@ -129,6 +129,6 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = "{}/web/media/".format(BASE_DIR)
 LOGIN_REDIRECT_URL = 'index'
 CTF_NAME = "Capture Tha Flag"
-#CTF_START = 
-#CTF_STOP = 
+CTF_START = "2018-02-24 13:00:00"
+CTF_END = "2018-02-24 14:10:00"
 MAX_TEAM_SIZE = 5

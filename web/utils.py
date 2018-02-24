@@ -9,6 +9,7 @@ from django.apps import apps
 from django.core.exceptions import ObjectDoesNotExist
 from io import BytesIO
 from zipfile import ZipFile
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -74,16 +75,16 @@ def get_client_ip(request):
 def create_zip(files):
     in_memory = BytesIO()
     zip = ZipFile(in_memory, "a")
-    
+ 
     for file in files:
         zip.writestr(file.name, file.read())
-    
+
     # fix for Linux zip files read in Windows
     for file in zip.filelist:
-        file.create_system = 0    
-    zip.close()   
-    return in_memory 
-    
+        file.create_system = 0
+    zip.close()
+    return in_memory
+
 
 # TODO: Apply for caching and syncing
 def pause_game():
@@ -102,3 +103,38 @@ def is_game_paused():
         return False
 
 
+def _iso8601_to_datetime(time):
+    return datetime.strptime(time, "%Y-%m-%d %H:%M:%S")
+
+
+#def get_time_diff(time):
+#    target = _iso8601_to_datetime(time)
+#    now = datetime.now()
+#    return target.seconds - now.seconds
+#
+#
+#def is_game_started():
+#    time_to_start = get_time_diff(settings.CTF_START)
+#    if time_to_start <= 0 and not is_game_ended():
+#        return True
+#    return False
+#
+#
+#def is_game_ended():
+#    time_to_end = get_time_diff(settings.CTF_END)
+#    if time_to_end <= 0:
+#        return True
+#    return False
+
+
+
+def is_game_started():
+    if datetime.now() >= _iso8601_to_datetime(settings.CTF_START):
+        return True
+    return False
+
+
+def is_game_ended():
+    if datetime.now() >= _iso8601_to_datetime(settings.CTF_END):
+        return True
+    return False

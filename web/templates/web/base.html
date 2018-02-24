@@ -59,9 +59,17 @@
    </div>
   </nav>
 
-{% if paused %}
+{% if paused or not game_started or game_ended %}
 <div class="alert alert-warning alert-dismissible fade show" role="alert">
+  {% if paused %}
   This game have been paused. Wait for news.
+  {% endif %}
+  {% if not game_started %}
+  The game have not started yet.
+  {% endif %}
+  {% if game_ended %}
+  The game have eneded. 
+  {% endif %}
 </div>
 {% endif %}
 
