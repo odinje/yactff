@@ -138,5 +138,8 @@ def email_user(user_id, subject, message, from_email=None, **kwargs):
     '''
     Sends an email to this User.
     '''
-    email = User.objects.get(id=user_id)
-    send_mail(subject, message, from_email, [email], **kwargs)
+    try:
+        user = User.objects.get(id=user_id)
+        send_mail(subject, message, from_email, [user.email], **kwargs)
+    except:
+        pass
