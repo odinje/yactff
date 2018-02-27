@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang=en>
 <head>
-  <title>{% block title%}yactff - Yet Another CTF Framework{% endblock %}</title>
+  <title>{% block title %}{{ ctf_name }}{% endblock %}</title>
   <!-- Option to load from cdn, and local -->
   <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
@@ -62,13 +62,13 @@
 {% if paused or not game_started or game_ended %}
 <div class="alert alert-warning alert-dismissible fade show" role="alert">
   {% if paused %}
-  This game have been paused. Wait for news.
+  Game paused.
   {% endif %}
   {% if not game_started %}
-  The game have not started yet.
+  The game is not started.
   {% endif %}
   {% if game_ended %}
-  The game have eneded. 
+  The game has eneded. 
   {% endif %}
 </div>
 {% endif %}
