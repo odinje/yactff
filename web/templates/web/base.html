@@ -22,15 +22,15 @@
     });
   </script>
 <body>
-  <nav class="navbar yactff navbar-expand-lg">
+  <nav class="navbar navbar-dark navbar-expand-lg">
     <a href="/" class="navbar-brand">{{ ctf_name }}</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
    <div class="collapse navbar-collapse" id="navbar">
     <ul class="navbar-nav mr-auto">
         {% for p, link in pages_navbar %}
-        <li class="nav-item"><a class="nav-link yactff" href={{ link }}>{{ p }}</a></li>
+        <li class="nav-item"><a class="nav-link" href={{ link }}>{{ p }}</a></li>
         {% endfor %}
       </ul>
     <ul class="nav navbar-nav ml-auto">
@@ -53,7 +53,7 @@
           </div>
       </li>
       {% else %}
-      <li class="nav-item"><a class="nav-link yactff" href="/login">Login</a></li>
+      <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
       {% endif %}
     </ul>
    </div>
@@ -61,14 +61,12 @@
 
 {% if paused or not game_started or game_ended %}
 <div class="alert alert-warning alert-dismissible fade show" role="alert">
-  {% if paused %}
-  Game paused.
-  {% endif %}
   {% if not game_started %}
   The game is not started.
-  {% endif %}
-  {% if game_ended %}
+  {% elif game_ended %}
   The game has eneded. 
+  {% elif paused %}
+  Game paused.
   {% endif %}
 </div>
 {% endif %}
