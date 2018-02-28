@@ -49,11 +49,13 @@ from web.utils import (
         )
 
 
-def _generate_user_token_message(user, domain, template):
+def _generate_user_token_message(user, domain, https, template):
+    print(https)
     message = render_to_string(template,
         {
             "user": user,
             "domain": domain,
+            "protocol": "https" if https else "http",
             "uid": urlsafe_base64_encode(force_bytes(user.pk)).decode("utf-8"),
             "token": account_token.make_token(user),
         })
@@ -79,9 +81,8 @@ def signup(request):
             user = form.save(commit=False)
             user.is_active = False
             user.save()
-            current_site = get_current_site(request)
             mail_subject = "Activate your account for {}".format(settings.CTF_NAME)
-            message = _generate_user_token_message(user, current_site, "web/user_activate_account_email.html")
+            message = _generate_user_token_message(user, get_current_site(request), request.is_secure(), "web/user_activate_account_email.html")
             email_user(user.id, mail_subject, message)
             messages.info(request, "Please confirm your email address to complete the registration")
             return redirect("index")
@@ -96,10 +97,10 @@ def user_activate(request, uidb64, token):
         user.is_active = True
         user.save()
         login(request, user)
-        messages.success(request, "Conratulaios! Email is verifed")
+        messages.success(request, "Email is verifed")
     else:
         messages.error(request, "Activation link is invalid!")
-    return redirect("index")
+    return redirect("user_profile")
 
 
 def page(request, path=None):
@@ -146,6 +147,7 @@ def page_remove(request, id):
     if page.name != "index":  # Cannot delete index, maybe give value error?
         page.delete()
     return redirect("index")
+
 
 @login_required
 @game_active
@@ -255,9 +257,8 @@ def user_password_reset(request):
         if form.is_valid():
             user = get_object_or_404(User, email=form.cleaned_data["email"])
             if user.is_active:
-                domain = get_current_site(request)
                 email_subject = "Password reset for {}".format(settings.CTF_NAME)
-                message = _generate_user_token_message(user, domain, "web/password_reset_email.html")
+                message = _generate_user_token_message(user, get_current_site(request), request.is_secure(), "web/password_reset_email.html")
                 email_user(user.id, email_subject, message)
                 messages.info(request, "Password reset link is sent to your email")
                 return redirect("index")
@@ -279,7 +280,7 @@ def user_password_reset_confirm(request, uidb64, token):
             if form.is_valid():
                 form.save()
                 login(request, user)
-                messages.success(request, "Password reset successfull. You are now logged in")
+                messages.success(request, "Password reset successful. You are now logged in")
                 return redirect("index")
         else:
             form = UserPasswordResetForm()
@@ -369,9 +370,11 @@ def team_join(request):
             team = Team.objects.get(token=token)
             user.team = team
             user.save()
+            messages.info(request, "Joined, {}".format(team.name))
+            return redirect("team_profile")
         except:
-            return HttpResponse("Team not found")
-        return redirect("team_profile")
+            messages.error(request, "Team not found")
+            return redirect("user_profile")
     else:
         return HttpResponse(status=405)
 
