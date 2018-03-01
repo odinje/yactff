@@ -1,8 +1,10 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm as _UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm as _UserCreationForm
 from web.models import Team, User, Page, Challenge, Category
 from yactff.widgets import CodeMirrorWidget
 
+class LoginForm(AuthenticationForm):
+    AuthenticationForm.error_messages["inactive"] = "This account is inactive. Click the activation link sent to your email"
 
 class TeamCreateForm(forms.ModelForm):
     class Meta:
