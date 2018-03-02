@@ -2,25 +2,22 @@
 <html lang=en>
 <head>
   <title>{% block title %}{{ ctf_name }}{% endblock %}</title>
-  <!-- Option to load from cdn, and local -->
-  <!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
-{% load static %}
-<link rel="stylesheet" href={% static "web/css/yactff.css" %}> 
-<script src={% static "web/js/utils.js" %}></script>
-<script src={% static "web/js/bootstrap_confirm.js" %}></script>
+  {% load static %}
+  <link rel="stylesheet" href={% static "bootstrap/css/bootstrap.min.css" %}> 
+  <link rel="stylesheet" href={% static "web/css/yactff.css" %}> 
+  <script src={% static "jquery/js/jquery-3.2.1.slim.min.js" %}></script>
+  <script src={% static "popper/js/popper.min.js" %}></script>
+  <script src={% static "bootstrap/js/bootstrap.min.js" %}></script>
+  <script src={% static "web/js/utils.js" %}></script>
 </head>
-  <script>
-    $(document).ready(function() {
-      $.each($('#navbar').find('li'), function() {
-        $(this).toggleClass('active', 
-            window.location.pathname.indexOf($(this).find('a').attr('href')) > -1);
-      }); 
-    });
-  </script>
+<script>
+$(document).ready(function() {
+  $.each($('#navbar').find('li'), function() {
+    $(this).toggleClass('active', 
+      window.location.pathname.indexOf($(this).find('a').attr('href')) > -1);
+  }); 
+});
+</script>
 <body>
   <nav class="navbar navbar-dark navbar-expand-lg">
     <a href="/" class="navbar-brand">{{ ctf_name }}</a>
