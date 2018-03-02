@@ -23,7 +23,7 @@ class Challenge(models.Model):  # Maybe change title -> name
     category = models.ForeignKey("Category", on_delete=models.DO_NOTHING)
     description = models.TextField(blank=True)
     points = models.IntegerField(default=0)
-    key = models.CharField(max_length=200, default="changeme")
+    key = models.CharField(max_length=200)
     active = models.BooleanField(default=False)
     author = models.ForeignKey("User", on_delete=models.DO_NOTHING)  # author
     file = models.FileField(blank=True)

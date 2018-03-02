@@ -212,6 +212,7 @@ def challenge(request, id):
         if not challenge.active:  # TODO: Rename active => is_active
             raise Http404
     context["challenge"] = challenge
+    context["flag_format"] = settings.CTF_FLAG_FORMAT
     if request.method == "POST" and team_id:
         if "flag" in request.POST:
             flag = request.POST["flag"]
@@ -228,7 +229,7 @@ def challenge_add(request):
     challenge_name = random_string()
     try:
         first_category = Category.objects.filter()[:1].get()
-        challenge = Challenge.objects.create(title=challenge_name, category=first_category, author=request.user)
+        challenge = Challenge.objects.create(title=challenge_name, category=first_category, author=request.user, key=settings.CTF_FLAG_FORMAT)
         return redirect("challenge", id=challenge.id)
     except:
         raise Http404  # Change to more useful return code
