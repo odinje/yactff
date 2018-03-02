@@ -1,9 +1,19 @@
 from yactff.settings.base import *
 import os
+import random
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'yactff.settings.production')
 
-DEBUG = True
+DEBUG = False
+COMPRESS_OFFLINE = True
+
+try:
+    with open(".key", "r") as f:
+        SECRET_KEY = f.read()
+except:
+    with open(".key", "w") as f:
+        SECRET_KEY = ''.join(random.SystemRandom().choice('abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)') for i in range(50))
+        f.write(SECRET_KEY)
 
 ALLOWED_HOSTS = ["web1.example.lan"]
 INTERNAL_IPS = ["127.0.0.1"]
@@ -31,3 +41,4 @@ CTF_START = "2018-02-24 13:00:00"
 CTF_END = "2018-02-24 14:10:00"
 MAX_TEAM_SIZE = 5
 CTF_FLAG_FORMAT = "ctf{...}"
+

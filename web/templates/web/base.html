@@ -3,13 +3,19 @@
 <head>
   <title>{% block title %}{{ ctf_name }}{% endblock %}</title>
   {% load static %}
+  {% load compress %}
+  {% compress css %}
   <link rel="stylesheet" href={% static "bootstrap/css/bootstrap.min.css" %}> 
   <link rel="stylesheet" href={% static "web/css/yactff.css" %}> 
+  {% endcompress %}
+  {% compress js %}
   <script src={% static "jquery/js/jquery-3.2.1.slim.min.js" %}></script>
   <script src={% static "popper/js/popper.min.js" %}></script>
   <script src={% static "bootstrap/js/bootstrap.min.js" %}></script>
   <script src={% static "web/js/utils.js" %}></script>
+  {% endcompress %}
 </head>
+{% compress js inline %}
 <script>
 $(document).ready(function() {
   $.each($('#navbar').find('li'), function() {
@@ -18,6 +24,7 @@ $(document).ready(function() {
   }); 
 });
 </script>
+{% endcompress %}
 <body>
   <nav class="navbar navbar-dark navbar-expand-lg">
     <a href="/" class="navbar-brand">{{ ctf_name }}</a>

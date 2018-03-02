@@ -4,6 +4,8 @@ import os
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'yactff.settings.development')
 
 DEBUG = True
+COMPRESS_ENABLED = True
+SECRET_KEY = '87k_d^98rd=b#h+c#%&+&+rjgq(+vmp31o12h67)1k@_#=f9ow'
 
 ALLOWED_HOSTS = []
 INTERNAL_IPS = ["127.0.0.1"]

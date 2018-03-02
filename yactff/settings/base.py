@@ -48,9 +48,13 @@ logging.config.dictConfig(LOGGING)
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '87k_d^98rd=b#h+c#%&+&+rjgq(+vmp31o12h67)1k@_#=f9ow'
 
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    # other finders..
+    'compressor.finders.CompressorFinder',
+)
 
 INSTALLED_APPS = [
     'django.contrib.auth',
@@ -59,6 +63,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'web.apps.WebConfig',
+    'compressor',
 ]
 
 MIDDLEWARE = [
@@ -127,4 +132,5 @@ USE_TZ = True
 STATIC_URL = "/static/"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = "{}/web/media/".format(BASE_DIR)
+STATIC_ROOT = "{}/web/static".format(BASE_DIR)
 LOGIN_REDIRECT_URL = 'index'
