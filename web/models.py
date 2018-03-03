@@ -7,6 +7,7 @@ from web.managers import UserManager, ChallengeManger, SubmissionManager
 from django.db.models import F, Sum
 from web.utils import save_page_file, delete_page_file
 from celery.decorators import task
+from django.core.cache import cache
 import uuid
 
 # remove description? Need?
@@ -46,6 +47,10 @@ class Submission(models.Model):  # Include which person who solved it?
     solved_by = models.ForeignKey("User", on_delete=models.DO_NOTHING)
 
     objects = SubmissionManager()
+
+    def save(self, *args, **kwargs):
+        super(Submission, self).save(*args, **kwargs)
+        cache.delete("scoreboard")
 
 
 class Team(models.Model):
@@ -122,9 +127,11 @@ class Page(models.Model):
     def save(self, *args, **kwargs):
         save_page_file(self.name, self.type, self.content)
         super(Page, self).save(*args, **kwargs)
-
+        cache.delete("page_{}".format(self.name))
+        
     def delete(self):
         delete_page_file(self.name, self.type)
+        cache.delete("page_{}".format(self.name))
         super(Page, self).delete()
 
 
