@@ -10,6 +10,7 @@ from django.contrib import messages
 from django.utils.encoding import force_bytes, force_text
 from web.tokens import account_token
 from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.core.cache import cache
 import sys
 import hashlib
 from web.models import (
@@ -104,11 +105,16 @@ def user_activate(request, uidb64, token):
 
 
 def page(request, path=None):
+    context = {}
     user = request.user
     name = path.split("/")[-1] if path else "index"
-    page = get_object_or_404(Page, name=name)
-    context = {}
+    cache_key = "page_{}".format(name)
+    page = cache.get(cache_key)
+    if not page:
+        page = get_object_or_404(Page, name=name)
+        cache.set(cache_key, page)
     if user.is_superuser:
+        page = get_object_or_404(Page, name=name)  # Need page object for for admin. 
         if request.method == "POST":
             old_name = page.name
             old_type = page.type
@@ -163,7 +169,6 @@ def challenges(request):
             form.append(AdminCategoryForm(request.POST, prefix="new_category"))
             for pos, f in enumerate(form):
                 if f.is_valid():
-                    print(pos)
                     if pos == len(form)-1 and f.cleaned_data["name"] == "":
                         break
                     elif f.cleaned_data["delete"]:
@@ -248,7 +253,7 @@ def scoreboard(request):
 
 
 def scoreboard_json(request):
-    scores = get_scoreboard()
+    scores = cache.get_or_set("scoreboard", get_scoreboard())
     return JsonResponse(scores, safe=False)
 
 
