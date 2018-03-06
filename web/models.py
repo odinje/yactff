@@ -137,7 +137,7 @@ class Page(models.Model):
 
 def get_scoreboard():
     scores = Submission.objects.values(team_id=F("team__id"), team_name=F("team__name")).annotate(team_score=Sum("challenge__points"))
-    return list(scores)
+    return sorted(scores, key=lambda k: k["team_score"])
 
 
 @task()
