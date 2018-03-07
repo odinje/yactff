@@ -5,7 +5,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib import messages
-from web.tokens import generate_user_token_message, verify_user_token 
+from web.tokens import generate_user_token_message, verify_user_token
 from web.models import (
         Submission,
         email_user,
@@ -110,11 +110,11 @@ def user_profile(request):
         userdata_form = UserChangeForm(instance=user)
         password_form = PasswordChangeForm(user)
     return render(request, "web/user_profile.html",
-        {
-            "challenges": challenges,
-            "password_form": password_form,
-            "userdata_form": userdata_form,
-        })
+                  {
+                       "password_form": password_form,
+                       "userdata_form": userdata_form,
+                       "challenges": challenges,
+                  })
 
 
 @admin_required
@@ -135,4 +135,3 @@ def user_show(request, id):
         form = AdminUserChangeForm(instance=user)
 
     return render(request, "web/admin_user.html", {"target_user": user, "form": form})
-

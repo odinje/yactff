@@ -1,7 +1,8 @@
 from django.contrib.auth.base_user import BaseUserManager
 from django.db import models
 from django.apps import apps
-from django.db.models import F, Sum
+from django.db.models import F
+
 
 class UserManager(BaseUserManager):
     use_in_migrations = True
@@ -35,7 +36,7 @@ class ChallengeManger(models.Manager):
     def with_solves(self, team, challenge=None):
         challenges = apps.get_model("web.Challenge")
         solves = apps.get_model("web.Submission")
-        
+
         if challenge:
             challenges = challenges.objects.get(id=challenge)
             try:
@@ -64,13 +65,11 @@ class SubmissionManager(models.Manager):
             print("Both canot be none")
             return None
         elif user is not None:
-            filter = { "team": team, "solved_by": user } 
+            filter = {"team": team, "solved_by": user}
         elif team is not None:
-            filter = { "team": team }
+            filter = {"team": team}
         try:
             submission = apps.get_model("web.Submission")
             return submission.objects.annotate(title=F("challenge__title"), points=F("challenge__points")).select_related("challenge", "solved_by").filter(**filter)
         except:
             return None
-
-

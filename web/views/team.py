@@ -2,30 +2,23 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from web.models import (
-        Submission,
-        Team,
-        )
+from web.models import Submission, Team
 from django.conf import settings
-from web.forms import (
-        TeamCreateForm,
-        )
-from web.decorator import (
-        team_required,
-        not_in_team,
-        )
-        
+from web.forms import TeamCreateForm
+from web.decorator import team_required, not_in_team
+
+
 @team_required
 def team_profile(request):
     team = request.user.team
     challenges = Submission.objects.get_solved(team=team)
     return render(request, "web/team_profile.html",
-            {
-                "team": team,
-                "team_view": True,
-                "max_team_size": settings.MAX_TEAM_SIZE,
-                "challenges": challenges
-            })
+                  {
+                      "team": team,
+                      "team_view": True,
+                      "max_team_size": settings.MAX_TEAM_SIZE,
+                      "challenges": challenges
+                  })
 
 
 @login_required
@@ -34,12 +27,12 @@ def public_team_profile(request, id):
     challenges = Submission.objects.get_solved(team=team)
 
     return render(request, "web/team_profile.html",
-            {
-                "team": team,
-                "team_view": False,
-                "max_team_size": None,
-                "challenges": challenges,
-            })
+                  {
+                      "team": team,
+                      "team_view": False,
+                      "max_team_size": None,
+                      "challenges": challenges,
+                  })
 
 
 @not_in_team
@@ -57,10 +50,10 @@ def team_create(request):
         form = TeamCreateForm()
 
     return render(request, "web/team_create.html",
-            {
-                "form": form,
-                "max_team_size": settings.MAX_TEAM_SIZE
-            })
+                  {
+                      "form": form,
+                      "max_team_size": settings.MAX_TEAM_SIZE
+                  })
 
 
 @not_in_team  # TODO: Rethink or redo
@@ -79,4 +72,3 @@ def team_join(request):
             return redirect("user_profile")
     else:
         return HttpResponse(status=405)
-

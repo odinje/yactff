@@ -7,4 +7,5 @@ def get_user_ip(sender, user, request, **kwargs):
     user.last_ip = ip
     user.save()
 
+
 user_logged_in.connect(get_user_ip)

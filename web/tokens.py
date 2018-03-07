@@ -5,16 +5,16 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_text
 from web.models import User
 
+
 def generate_user_token_message(user, domain, https, template):
-    print(https)
     message = render_to_string(template,
-        {
-            "user": user,
-            "domain": domain,
-            "protocol": "https" if https else "http",
-            "uid": urlsafe_base64_encode(force_bytes(user.pk)).decode("utf-8"),
-            "token": account_token.make_token(user),
-        })
+                               {
+                                    "user": user,
+                                    "domain": domain,
+                                    "protocol": "https" if https else "http",
+                                    "uid": urlsafe_base64_encode(force_bytes(user.pk)).decode("utf-8"),
+                                    "token": account_token.make_token(user),
+                               })
     return message
 
 
@@ -27,6 +27,7 @@ def verify_user_token(uidb64, token):
     if user is not None and account_token.check_token(user, token):
         return user
     return None
+
 
 class TokenGenerator(PasswordResetTokenGenerator):
     def _make_hash_value(self, user, timestamp):

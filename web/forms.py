@@ -3,8 +3,10 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm as _U
 from web.models import Team, User, Page, Challenge, Category
 from yactff.widgets import CodeMirrorWidget
 
+
 class LoginForm(AuthenticationForm):
     AuthenticationForm.error_messages["inactive"] = "This account is inactive. Click the activation link sent to your email"
+
 
 class TeamCreateForm(forms.ModelForm):
     class Meta:
@@ -32,6 +34,7 @@ class UserPasswordResetForm(_UserCreationForm):
     class Meta(_UserCreationForm.Meta):
         model = User
         fields = ()
+
 
 class AdminUserChangeForm(UserChangeForm):
     class Meta(UserChangeForm.Meta):

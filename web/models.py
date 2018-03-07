@@ -10,6 +10,7 @@ from celery.decorators import task
 from django.core.cache import cache
 import uuid
 
+
 # remove description? Need?
 class Category(models.Model):
     name = models.CharField(max_length=50, unique=True)
@@ -60,7 +61,7 @@ class Team(models.Model):
     name = models.CharField(max_length=200, unique=True)
     logo = models.ImageField(upload_to="team/logo/", max_length=255, blank=True) 
     token = models.UUIDField(default=uuid.uuid4, editable=False)
-    
+
     def __str__(self):
         return self.name
 
@@ -82,7 +83,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(_('first name'), max_length=30, blank=True)
     last_name = models.CharField(_('last name'), max_length=30, blank=True)
     date_joined = models.DateTimeField(_('date joined'), auto_now_add=True)
-    last_ip  = models.TextField(_("IP address"))
+    last_ip = models.TextField(_("IP address"))
     is_active = models.BooleanField(_('active'), default=True)
     is_staff = models.BooleanField(_("staff"), default=False)  # Can probably be removed since superuser is enoguh
     team = models.ForeignKey("Team", on_delete=models.DO_NOTHING, null=True)
@@ -112,7 +113,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         else:
             return self.nickname
 
-
     def have_team(self):
         return True if self.team else False
 
@@ -131,7 +131,7 @@ class Page(models.Model):
         save_page_file(self.name, self.type, self.content)
         super(Page, self).save(*args, **kwargs)
         cache.delete("page_{}".format(self.name))
-        
+
     def delete(self):
         delete_page_file(self.name, self.type)
         cache.delete("page_{}".format(self.name))

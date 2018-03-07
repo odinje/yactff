@@ -30,7 +30,7 @@ def load_page_files():
     '''
     Then read all local page file, and load it into the database.
     '''
-    Page = apps.get_model("web.Page") 
+    Page = apps.get_model("web.Page")
     for type in Page.TYPE_CHOICES:
         files = glob.glob("{0}/*{1}".format(settings.PAGE_DIR, type[0]))
         for file in files:
@@ -58,9 +58,9 @@ def delete_page_file(name, type):
     path = _page_path(settings.PAGE_DIR, name, type)
     try:
         os.remove(path)
-    except OSError as e: # this would be "except OSError, e:" before Python 2.6
-        if e.errno != errno.ENOENT: # errno.ENOENT = no such file or directory
-            raise # re-raise exception if a different error occurred
+    except OSError as e:  # this would be "except OSError, e:" before Python 2.
+        if e.errno != errno.ENOENT:  # errno.ENOENT = no such file or directory
+            raise  # re-raise exception if a different error occurred
 
 
 def get_client_ip(request):
@@ -75,7 +75,7 @@ def get_client_ip(request):
 def create_zip(files):
     in_memory = BytesIO()
     zip = ZipFile(in_memory, "a")
- 
+
     for file in files:
         zip.writestr(file.name, file.read())
 
@@ -105,27 +105,6 @@ def is_game_paused():
 
 def _iso8601_to_datetime(time):
     return datetime.strptime(time, "%Y-%m-%d %H:%M:%S")
-
-
-#def get_time_diff(time):
-#    target = _iso8601_to_datetime(time)
-#    now = datetime.now()
-#    return target.seconds - now.seconds
-#
-#
-#def is_game_started():
-#    time_to_start = get_time_diff(settings.CTF_START)
-#    if time_to_start <= 0 and not is_game_ended():
-#        return True
-#    return False
-#
-#
-#def is_game_ended():
-#    time_to_end = get_time_diff(settings.CTF_END)
-#    if time_to_end <= 0:
-#        return True
-#    return False
-
 
 
 def is_game_started():

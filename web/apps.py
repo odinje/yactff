@@ -1,6 +1,7 @@
 from django.apps import AppConfig
 from web.utils import pause_game
 
+
 class WebConfig(AppConfig):
     name = 'web'
 
