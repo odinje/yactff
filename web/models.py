@@ -48,6 +48,9 @@ class Submission(models.Model):  # Include which person who solved it?
 
     objects = SubmissionManager()
 
+    class Meta:
+        unique_together = ("team", "challenge")
+
     def save(self, *args, **kwargs):
         super(Submission, self).save(*args, **kwargs)
         cache.delete("scoreboard")
