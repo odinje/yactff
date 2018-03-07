@@ -90,7 +90,7 @@ def challenge(request, id):
             raise Http404
     context["challenge"] = challenge
     context["flag_format"] = settings.CTF_FLAG_FORMAT
-    if request.method == "POST" and team_id:
+    if request.method == "POST" and team_id and not challenge.is_solved:
         if "flag" in request.POST:
             flag = request.POST["flag"]
             if challenge.is_flag(flag):
