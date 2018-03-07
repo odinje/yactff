@@ -119,7 +119,7 @@ def user_profile(request):
 
 @admin_required
 def user_all(request):
-    users = User.objects.all()
+    users = User.objects.all().order_by("id")
 
     return render(request, "web/admin_users.html", {"users": users})
 
