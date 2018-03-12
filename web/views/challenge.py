@@ -27,6 +27,7 @@ from web.utils import (
         pause_game as _pause_game,
         )
 
+
 @login_required
 @game_active
 def challenges(request):
@@ -90,6 +91,7 @@ def challenge(request, id):
             raise Http404
     context["challenge"] = challenge
     context["flag_format"] = settings.CTF_FLAG_FORMAT
+    context["solves_procent"] = challenge.solves() * 100
     if request.method == "POST" and team_id and not challenge.is_solved:
         if "flag" in request.POST:
             flag = request.POST["flag"]

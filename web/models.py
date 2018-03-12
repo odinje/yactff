@@ -40,6 +40,11 @@ class Challenge(models.Model):  # Maybe change title -> name
             return True
         return False
 
+    def solves(self):
+        submission_count = Submission.objects.filter(challenge=self.id).count()
+        team_count = Team.objects.all().count()
+        return float(submission_count / team_count)
+
 
 class Submission(models.Model):  # Include which person who solved it?
     team = models.ForeignKey("Team", on_delete=models.DO_NOTHING)

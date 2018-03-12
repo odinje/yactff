@@ -17,7 +17,7 @@ def page(request, path=None):
         page = get_object_or_404(Page, name=name)
         cache.set(cache_key, page)
     if user.is_superuser:
-        page = get_object_or_404(Page, name=name)  # Need page object for for admin. 
+        page = get_object_or_404(Page, name=name)  # Need page object for for admin.
         if request.method == "POST":
             old_name = page.name
             old_type = page.type

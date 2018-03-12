@@ -2,8 +2,11 @@
 {% block content %}
 {% load markdown %}
 <div class="card">
-  <div class="card-header">
-    Category: {{challenge.category.name}}
+  <div class="card-header"> 
+    <div class="row">
+      <div class="col-md-6">Category: {{challenge.category.name}}</div>
+      <div class="col-md-6 text-right">Solves: {{solves_procent}}%</div>
+    </div>
   </div>
   <div class="card-body">
     <h4 class="card-title">{{challenge.title}} <span class="badge badge-secondary"> Points: {{challenge.points}}</span></h4>
