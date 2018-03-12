@@ -4,15 +4,15 @@
 <div class="card">
   <div class="card-header"> 
     <div class="row">
-      <div class="col-md-6">Category: {{challenge.category.name}}</div>
-      <div class="col-md-6 text-right">Solves: {{solves_procent}}%</div>
+      <div class="col-md-6">Category: {{ challenge.category.name }}</div>
+      <div class="col-md-6 text-right">Solves: {{ solves_procent|floatformat:"0" }}%</div>
     </div>
   </div>
   <div class="card-body">
-    <h4 class="card-title">{{challenge.title}} <span class="badge badge-secondary"> Points: {{challenge.points}}</span></h4>
+    <h4 class="card-title">{{ challenge.title }} <span class="badge badge-secondary"> Points: {{ challenge.points }}</span></h4>
     <p class="card-text">{{ challenge.description | markdown | safe }}<p>
     {% if challenge.file %}
-    <p class="card-text"><a href="{{challenge.file.url}}">{{challenge.file.name}}</a></p>
+    <p class="card-text"><a href="{{ challenge.file.url }}">{{ challenge.file.name }}</a></p>
     {% endif %}
   </div>
   <div class="card-body">
