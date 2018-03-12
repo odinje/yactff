@@ -4,7 +4,7 @@ from django.core.mail import send_mail
 from django.contrib.auth.models import PermissionsMixin
 from django.utils.translation import ugettext_lazy as _
 from web.managers import UserManager, ChallengeManger, SubmissionManager
-from django.db.models import F, Sum
+from django.db.models import F, Sum, Max
 from web.utils import save_page_file, delete_page_file
 from celery.decorators import task
 from django.core.cache import cache
@@ -139,7 +139,10 @@ class Page(models.Model):
 
 
 def get_scoreboard():
-    scores = Submission.objects.values(team_id=F("team__id"), team_name=F("team__name")).annotate(team_score=Sum("challenge__points")).order_by("-team_score")
+    scores = Submission.objects.values(team_id=F("team__id"), team_name=F("team__name"))
+    scores = scores.annotate(last_submission=Max("completed"), team_score=Sum("challenge__points"))
+    scores = scores.order_by("-team_score", "last_submission")
+
     return list(scores)
 
 
