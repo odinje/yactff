@@ -10,8 +10,12 @@ from django.core.exceptions import ObjectDoesNotExist
 from io import BytesIO
 from zipfile import ZipFile
 from datetime import datetime
+from django.core.cache import cache
 
 logger = logging.getLogger(__name__)
+
+
+YACTFF_PAUSED_FILE = "/tmp/.yactff_paused"
 
 
 def get_or_none(classmodel, **kwargs):
@@ -86,18 +90,17 @@ def create_zip(files):
     return in_memory
 
 
-# TODO: Apply for caching and syncing
 def pause_game():
-    state = os.environ.pop("YACTFF_PAUSED", None)
-    if state is None or state == "true":
-        os.environ["YACTFF_PAUSED"] = "false"
+    if is_game_paused():
+        os.remove(YACTFF_PAUSED_FILE)
     else:
-        os.environ["YACTFF_PAUSED"] = "true"
+        open(YACTFF_PAUSED_FILE, "a").close()
+    cache.delete("CTF_PAUSED")
 
 
 def is_game_paused():
-    state = os.environ["YACTFF_PAUSED"]
-    if state == "true":
+    state = cache.get_or_set("CTF_PAUSED", os.path.exists(YACTFF_PAUSED_FILE))
+    if state:
         return True
     else:
         return False
