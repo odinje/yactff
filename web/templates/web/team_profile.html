@@ -1,12 +1,12 @@
 {% extends "web/base.html" %}
 
 {% block content %}
-<h1>{{ team_view|yesno:"Welcome&#44,Team&#58"|safe }} {{team.name}}</h1>
+<h1>{{ team_view|yesno:"Welcome&#44,"|safe }} {{team.name}}</h1>
   <hr \>
   <div class="row">
     {% with members=team.get_members %}
-    <div class="col alert alert-info">
-      <h2 class="alert-heading">Team members</h2>
+    <div class="col alert alert-secondary">
+      <h2 class="alert-heading">Members</h2>
       <ul>
         {% for member in members %}
         <li>{{member.nickname}}</li>
@@ -15,11 +15,11 @@
       {% if team_view %}
       <hr />
       <p>{{ members|length }} of {{max_team_size }} team members.</p>
-      <p><b>Team token:</b> {{ team.token }}</p>
+      <p><b>Team token:</b></br> {{ team.token }}</p>
       {% endif %}
     </div>
     {% endwith %}
-    <div class="col">
+    <div class="col-8">
       <h3>Solved challenges</h3>
       {% if challenges %}
       <table class="table table-sm table-striped">
