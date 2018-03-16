@@ -19,3 +19,7 @@ local_settings.py
 .env
 db.sqlite3
 web/media/*
+.ropeproject/
+### External libs ###
+management 
+*user_welcome_email.html 

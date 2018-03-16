@@ -40,12 +40,14 @@ def load_page_files():
         for file in files:
             name = file.split("/")[-1]
             name = name.split(".")[0]
-
-            with open(file, "r") as f:
-                try:
-                    Page.objects.get_or_create(name=name.lower(), type=type[0], content=f.read())
-                except:
-                    print("Database problem")
+            
+            page, created = Page.objects.get_or_create(name=name.lower())
+            
+            if not created:
+                with open(file, "r") as f:
+                    page.type = type[0]
+                    page.content = f.read()
+                    page.save()
 
 
 def _page_path(dir, name, type):
