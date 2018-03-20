@@ -7,5 +7,8 @@ class WebConfig(AppConfig):
 
     def ready(self):
         import web.signals
-        pause_game()  # Init game pause, first run sets to False.
-        load_page_files()
+        try:
+            pause_game()  # Init game pause, first run sets to False.
+            load_page_files()
+        except:
+            pass
