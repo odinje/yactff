@@ -1,15 +1,18 @@
 
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse
 from django.contrib.auth import login
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib import messages
 from web.tokens import generate_user_token_message, verify_user_token
+from web.utils import write_game_csv
 from web.models import (
         Submission,
         email_user,
-        User
+        User,
+        get_scoreboard,
         )
 from django.conf import settings
 from web.forms import (
@@ -135,3 +138,10 @@ def user_show(request, id):
         form = AdminUserChangeForm(instance=user)
 
     return render(request, "web/admin_user.html", {"target_user": user, "form": form})
+
+@admin_required
+def export_game_csv(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="export.csv"'
+    scores = get_scoreboard()
+    return  write_game_csv(response, scores)

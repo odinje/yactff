@@ -5,8 +5,8 @@
   {% load static %}
   {% load compress %}
   {% compress css %}
-  <link rel="stylesheet" href={% static "bootstrap/css/bootstrap.min.css" %}> 
-  <link rel="stylesheet" href={% static "web/css/yactff.css" %}> 
+  <link rel="stylesheet" href={% static "bootstrap/css/bootstrap.min.css" %}>
+  <link rel="stylesheet" href={% static "web/css/yactff.css" %}>
   {% endcompress %}
   {% compress js %}
   <script src={% static "jquery/js/jquery-3.2.1.slim.min.js" %}></script>
@@ -19,9 +19,9 @@
 <script>
 $(document).ready(function() {
   $.each($('#navbar').find('li'), function() {
-    $(this).toggleClass('active', 
+    $(this).toggleClass('active',
       window.location.pathname.indexOf($(this).find('a').attr('href')) > -1);
-  }); 
+  });
 });
 </script>
 {% endcompress %}
@@ -52,6 +52,8 @@ $(document).ready(function() {
               <div class="dropdown-divider"></div>
               <a class="dropdown-item" href={% url "pause_game" %}>{{paused|yesno:"Unpause,Pause"}} game</a>
               <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href={% url "export_game_csv" %}>Export game</a>
+              <div class="dropdown-divider"></div>
               {% endif %}
               <a class="dropdown-item" href="/user/logout">Logout</a>
           </div>
@@ -68,7 +70,7 @@ $(document).ready(function() {
   {% if not game_started %}
   The game is not started.
   {% elif game_ended %}
-  The game has eneded. 
+  The game has eneded.
   {% elif paused %}
   Game paused.
   {% endif %}
@@ -82,7 +84,7 @@ $(document).ready(function() {
 </div>
 {% endfor %}
 {% endif %}
-  
+
   <div class="container mt-5">
     {% block admin_content %}{% endblock %}
     {% block content %}{% endblock %}
