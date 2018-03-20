@@ -145,8 +145,8 @@ def write_game_csv(response, scoreboard):
         users = User.objects.filter(team__name=team_name)
         for c, user in enumerate(users):
             row["{}. nickname".format(c+1)] = user.nickname
-            row["{}. email".format(c+1)] = user.nickname
-            row["{}. first_name".format(c+1)] = user.nickname
-            row["{}. last_name".format(c+1)] = user.nickname
+            row["{}. email".format(c+1)] = user.email
+            row["{}. first_name".format(c+1)] = user.first_name
+            row["{}. last_name".format(c+1)] = user.last_name
         writer.writerow(row)
     return response
