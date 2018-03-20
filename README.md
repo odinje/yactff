@@ -4,7 +4,7 @@ A web framework for Jeoprody style CTF.
 
 ## Getting Started
 
-Below is documentation for setting up a development enviornment for YACTFF. 
+Below is documentation for setting up a development environment for YACTFF.
 
 [Screenshots](https://github.com/odinje/yactff/wiki/Screenshots)
 
@@ -13,9 +13,15 @@ Below is documentation for setting up a development enviornment for YACTFF.
 * Python 3.
 * Pip3
 
-### Installing
+### Installing and running
 
-TODO!
+```
+virtualenv -p python3 yactff
+source yactff/bin/activate
+pip install -r requirements_dev.txt
+python ./manage.py migrate --setting=yactff.settings.development
+python ./manage.py runserver --setting=yactff.settings.development
+```
 
 ## Running the tests
 
@@ -29,4 +35,3 @@ TODO!
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details
-
