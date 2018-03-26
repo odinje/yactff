@@ -11,7 +11,7 @@ class LoginForm(AuthenticationForm):
 class TeamCreateForm(forms.ModelForm):
     class Meta:
         model = Team
-        fields = ["name", "logo"]
+        fields = ["name"]
 
 
 class UserCreationForm(_UserCreationForm):
@@ -23,7 +23,8 @@ class UserCreationForm(_UserCreationForm):
 class UserChangeForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ("email", "nickname", "first_name", "last_name")
+        fields = ("email", "nickname", "first_name", "last_name",
+                  "age", "country", "city", "nor_citizen")
 
 
 class UserRequestPasswordResetForm(forms.Form):
@@ -38,7 +39,7 @@ class UserPasswordResetForm(_UserCreationForm):
 
 class AdminUserChangeForm(UserChangeForm):
     class Meta(UserChangeForm.Meta):
-        fields = ("email", "nickname", "first_name", "last_name", "team", "is_active")
+        UserChangeForm.Meta.fields += ("team", "is_active")
 
 
 class AdminPageForm(forms.ModelForm):

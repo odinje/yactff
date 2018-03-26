@@ -64,7 +64,7 @@ class Submission(models.Model):  # Include which person who solved it?
 
 class Team(models.Model):
     name = models.CharField(max_length=200, unique=True)
-    logo = models.ImageField(upload_to="team/logo/", max_length=255, blank=True) 
+    logo = models.ImageField(upload_to="team/logo/", max_length=255, blank=True)
     token = models.UUIDField(default=uuid.uuid4, editable=False)
 
     def __str__(self):
@@ -87,6 +87,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     nickname = models.CharField(_("nickname"), max_length=255)
     first_name = models.CharField(_('first name'), max_length=30, blank=True)
     last_name = models.CharField(_('last name'), max_length=30, blank=True)
+    age = models.IntegerField(_("age"), blank=True)
+    country = models.CharField(_("country"), max_length=255, blank=True)
+    city = models.CharField(_("city"), max_length=255, blank=True)
+    nor_citizen = models.BooleanField(_("norwegian citizen"), blank=True)
     date_joined = models.DateTimeField(_('date joined'), auto_now_add=True)
     last_ip = models.TextField(_("IP address"))
     is_active = models.BooleanField(_('active'), default=True)
