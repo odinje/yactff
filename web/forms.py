@@ -23,8 +23,7 @@ class UserCreationForm(_UserCreationForm):
 class UserChangeForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ("email", "nickname", "first_name", "last_name",
-                  "age", "country", "city", "nor_citizen")
+        fields = ("email", "nickname", "first_name", "last_name")
 
 
 class UserRequestPasswordResetForm(forms.Form):
