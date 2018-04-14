@@ -1,4 +1,6 @@
 from django.db import models
+from collections import Counter
+from itertools import chain
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.core.mail import send_mail
 from django.contrib.auth.models import PermissionsMixin
@@ -41,9 +43,15 @@ class Challenge(models.Model):  # Maybe change title -> name
         return False
 
     def solves(self):
-        submission_count = Submission.objects.filter(challenge=self.id).count()
-        team_count = Team.objects.all().count()
-        return float(submission_count / team_count)
+        tmp_teams = []
+        submission_count = 0
+        submissions = Submission.objects.filter(challenge=self.id)
+        for submission in submissions:
+            team = submission.team
+            submission_count += 1
+            if team not in tmp_teams:
+                tmp_teams.append(team)
+        return (submission_count / len(tmp_teams))
 
 
 class Submission(models.Model):  # Include which person who solved it?
