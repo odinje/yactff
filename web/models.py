@@ -43,15 +43,9 @@ class Challenge(models.Model):  # Maybe change title -> name
         return False
 
     def solves(self):
-        tmp_teams = []
-        submission_count = 0
-        submissions = Submission.objects.filter(challenge=self.id)
-        for submission in submissions:
-            team = submission.team
-            submission_count += 1
-            if team not in tmp_teams:
-                tmp_teams.append(team)
-        return (submission_count / len(tmp_teams))
+        submission_count = Submission.objects.filter(challenge=self.id).count()
+        team_count = Submission.objects.only("team").count()
+        return (submission_count / team_count)
 
 
 class Submission(models.Model):  # Include which person who solved it?
