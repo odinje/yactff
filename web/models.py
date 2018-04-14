@@ -44,7 +44,7 @@ class Challenge(models.Model):  # Maybe change title -> name
 
     def solves(self):
         submission_count = Submission.objects.filter(challenge=self.id).count()
-        team_count = Submission.objects.only("team").count()
+        team_count = Submission.objects.values("team").distinct().count() 
         return (submission_count / team_count)
 
 
