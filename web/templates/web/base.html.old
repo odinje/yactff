@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <title>{% block title %}{{ ctf_name }}{% endblock %}</title>
+  {% load static %}
+  {% load compress %}
+  {% compress css %}
+  <link rel="stylesheet" href={% static "bootstrap/css/bootstrap.min.css" %}>
+  <link rel="stylesheet" href={% static "web/css/yactff.css" %}>
+  {% endcompress %}
+  {% compress js %}
+  <script src={% static "jquery/js/jquery-3.2.1.slim.min.js" %}></script>
+  <script src={% static "popper/js/popper.min.js" %}></script>
+  <script src={% static "bootstrap/js/bootstrap.min.js" %}></script>
+  <script src={% static "web/js/utils.js" %}></script>
+  {% endcompress %}
+</head>
+{% compress js inline %}
+<script>
+$(document).ready(function() {
+  $.each($('#navbar').find('li'), function() {
+    $(this).toggleClass('active',
+      window.location.pathname.indexOf($(this).find('a').attr('href')) > -1);
+  });
+});
+</script>
+{% endcompress %}
+<body>
+  <nav class="navbar navbar-dark navbar-expand-lg">
+    <a href="/" class="navbar-brand">{{ ctf_name }}</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+   <div class="collapse navbar-collapse" id="navbar">
+    <ul class="navbar-nav mr-auto">
+        {% for p, link in pages_navbar %}
+        <li class="nav-item"><a class="nav-link" href={{ link }}>{{ p }}</a></li>
+        {% endfor %}
+      </ul>
+    <ul class="nav navbar-nav ml-auto">
+      {% if user.is_authenticated %}
+      <li class="nav-item">
+        <div class="dropdown">
+          <button class="btn btn-link yactff dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              {{user.get_nickname_and_team}}
+          </button>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <a class="dropdown-item" href="/user/profile">Profile</a>
+              <div class="dropdown-divider"></div>
+              {% if user.is_superuser %}
+              <a class="dropdown-item" href={% url "user_all" %}>Users</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href={% url "pause_game" %}>{{paused|yesno:"Unpause,Pause"}} game</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href={% url "export_game_csv" %}>Export game</a>
+              <div class="dropdown-divider"></div>
+              {% endif %}
+              <a class="dropdown-item" href="/user/logout">Logout</a>
+          </div>
+      </li>
+      {% else %}
+      <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
+      {% endif %}
+    </ul>
+   </div>
+  </nav>
+
+{% if paused or not game_started or game_ended %}
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+  {% if not game_started %}
+  The game is not started.
+  {% elif game_ended %}
+  The game has eneded.
+  {% elif paused %}
+  Game paused.
+  {% endif %}
+</div>
+{% endif %}
+
+{% if messages %}
+{% for message in messages %}
+<div class="alert {{message.tags}} alert-dismissible fade show" role="alert">
+  {{message}}
+</div>
+{% endfor %}
+{% endif %}
+
+  <div class="container mt-5">
+    {% block admin_content %}{% endblock %}
+    {% block content %}{% endblock %}
+  </div>
+
+</body>
+</html>
