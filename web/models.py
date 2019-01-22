@@ -5,12 +5,14 @@ from django.contrib.auth.base_user import AbstractBaseUser
 from django.core.mail import send_mail
 from django.contrib.auth.models import PermissionsMixin
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 from web.managers import UserManager, ChallengeManger, SubmissionManager
 from django.db.models import F, Sum, Max
 from web.utils import save_page_file, delete_page_file
 from celery.decorators import task
 from django.core.cache import cache
 import uuid
+import math
 
 
 # remove description? Need?
@@ -47,6 +49,17 @@ class Challenge(models.Model):  # Maybe change title -> name
         team_count = Submission.objects.values("team").distinct().count() 
         return (submission_count / team_count)
 
+    def calculate_dynamic_points(self):
+        #https://github.com/pwn2winctf/2018/blob/master/nizkctf/scoring.py
+        max_points = 500
+        min_points = 50 
+        K = 80.0
+        V = 3.0
+        solve_count = Submission.objects.filter(challenge=self.id).count()
+        value = int(max(min_points, math.floor(max_points - K*math.log((solve_count + V)/(1+V), 2))))
+        self.points = value
+
+
 
 class Submission(models.Model):  # Include which person who solved it?
     team = models.ForeignKey("Team", on_delete=models.DO_NOTHING)
@@ -61,6 +74,9 @@ class Submission(models.Model):  # Include which person who solved it?
 
     def save(self, *args, **kwargs):
         super(Submission, self).save(*args, **kwargs)
+        c = Challenge.objects.get(pk=self.challenge_id)
+        c.calculate_dynamic_points()
+        c.save()
         cache.delete("scoreboard")
 
 

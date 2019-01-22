@@ -73,7 +73,6 @@ def challenge(request, id):
         if request.method == "POST":
             form = AdminChallengeForm(request.POST,  instance=challenge)
             files = request.FILES.getlist("files")
-            print(files)
             if form.is_valid():
                 new_challenge = form.save(commit=False)
                 if files:
@@ -135,3 +134,5 @@ def scoreboard_json(request):
 def pause_game(request):
     _pause_game()
     return redirect("index")
+
+
