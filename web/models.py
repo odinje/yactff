@@ -9,7 +9,6 @@ from django.conf import settings
 from web.managers import UserManager, ChallengeManger, SubmissionManager
 from django.db.models import F, Sum, Max
 from web.utils import save_page_file, delete_page_file
-from celery.decorators import task
 from django.core.cache import cache
 import uuid
 import math
@@ -47,6 +46,8 @@ class Challenge(models.Model):  # Maybe change title -> name
     def solves(self):
         submission_count = Submission.objects.filter(challenge=self.id).count()
         team_count = Submission.objects.values("team").distinct().count() 
+        if submission_count == 0 or team_count == 0:
+            return 0
         return (submission_count / team_count)
 
     def calculate_dynamic_points(self):
@@ -55,11 +56,15 @@ class Challenge(models.Model):  # Maybe change title -> name
         min_points = 50 
         K = 80.0
         V = 3.0
-        solve_count = Submission.objects.filter(challenge=self.id).count()
+        solve_count = max(1, Submission.objects.filter(challenge=self.id).count())
+        print(solve_count)
         value = int(max(min_points, math.floor(max_points - K*math.log((solve_count + V)/(1+V), 2))))
         self.points = value
 
 
+    def save(self, *args, **kwargs):
+        self.calculate_dynamic_points()
+        super(Challenge, self).save(*args, **kwargs)
 
 class Submission(models.Model):  # Include which person who solved it?
     team = models.ForeignKey("Team", on_delete=models.DO_NOTHING)
@@ -161,7 +166,15 @@ class Page(models.Model):
         super(Page, self).delete()
 
 
+
+def recalculate_score():
+    challenges = Challenge.objects.all()
+    for c in challenges:
+        c.calculate_dynamic_points()
+        c.save()
+
 def get_scoreboard():
+    #recalculate_score() # Takes time, but ensure correct score
     scores = Submission.objects.values(team_id=F("team__id"), team_name=F("team__name"))
     scores = scores.annotate(last_submission=Max("completed"), team_score=Sum("challenge__points"))
     scores = scores.order_by("-team_score", "last_submission")
@@ -169,7 +182,6 @@ def get_scoreboard():
     return list(scores)
 
 
-@task()
 def email_user(user_id, subject, message, from_email=None, **kwargs):
     '''
     Sends an email to this User.
