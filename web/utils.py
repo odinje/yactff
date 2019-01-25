@@ -95,14 +95,13 @@ def create_zip(files):
 
 def pause_game():
     if is_game_paused():
-        os.remove(YACTFF_PAUSED_FILE)
+        cache.set("CTF_PAUSED", False)
     else:
-        open(YACTFF_PAUSED_FILE, "a").close()
-    cache.delete("CTF_PAUSED")
+        cache.set("CTF_PAUSED", True)
 
 
 def is_game_paused():
-    state = cache.get_or_set("CTF_PAUSED", os.path.exists(YACTFF_PAUSED_FILE))
+    state = cache.get("CTF_PAUSED")
     if state:
         return True
     else:
