@@ -1,6 +1,6 @@
 
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.contrib.auth import login
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.decorators import login_required
@@ -30,6 +30,8 @@ from web.decorator import (
 
 @anonymous_required
 def signup(request):
+    if not settings.SIGNUP_OPEN: #HACK: quick method of removing singup
+        raise Http404
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():

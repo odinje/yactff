@@ -1,7 +1,10 @@
 from django.urls import re_path, path
 from django.contrib.auth import views as auth_views
 from web import views
+from django.conf import settings
 from web.forms import LoginForm
+
+LoginForm.signup_open = settings.SIGNUP_OPEN
 
 urlpatterns = [
     path("", views.page, name="index"),
