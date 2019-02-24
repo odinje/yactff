@@ -1,5 +1,5 @@
 from django.apps import AppConfig
-from web.utils import pause_game, load_page_files
+from web.utils import init_pause_state, load_page_files
 
 
 class WebConfig(AppConfig):
@@ -8,7 +8,7 @@ class WebConfig(AppConfig):
     def ready(self):
         import web.signals
         try:
-            pause_game()  # Init game pause, first run sets to False.
+            init_pause_state()
             load_page_files()
         except:
             pass

@@ -100,8 +100,13 @@ def pause_game():
         cache.set("CTF_PAUSED", True)
 
 
+def init_pause_state():
+    if not is_game_paused():
+        cache.set("CTF_PAUSED", False)
+
+
 def is_game_paused():
-    state = cache.get("CTF_PAUSED")
+    state = cache.get("CTF_PAUSED", False)
     if state:
         return True
     else:
