@@ -1,9 +1,12 @@
-
+from django.urls import reverse_lazy
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import Http404, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.core.cache import cache
+from django.views import View
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.utils.decorators import method_decorator
 import sys
 import hashlib
 from web.models import (
@@ -28,78 +31,90 @@ from web.utils import (
         )
 
 
-@login_required
-@game_active
-def challenges(request):
-    user = request.user
-    categories = Category.objects.all()
-    challenges = Challenge.objects.with_solves(team=user.team_id)
-    context = {}
-    if user.is_superuser:
-        template = "web/admin_challenges.html"
-        if request.method == "POST":
-            form = [AdminCategoryForm(request.POST, instance=category, prefix=category.name) for category in categories]
-            form.append(AdminCategoryForm(request.POST, prefix="new_category"))
-            for pos, f in enumerate(form):
-                if f.is_valid():
-                    if pos == len(form)-1 and f.cleaned_data["name"] == "":
-                        break
-                    elif f.cleaned_data["delete"]:
-                        f.instance.delete()
-                    else:
-                        f.save()
-            return redirect("challenges")
-        else:
-            form = [AdminCategoryForm(instance=category, prefix=category.name) for category in categories]
-            form.append(AdminCategoryForm(prefix="new_category"))
-        context["form"] = form
-    else:
-        template = "web/challenges.html"
-    context["challenges"] = challenges
-    context["categories"] = categories
-
-    return render(request, template, context)
+game_decorators = [login_required, game_active]
 
 
-@login_required
-@game_active
-def challenge(request, id):
-    user = request.user
-    team_id = user.team_id
-    challenge = Challenge.objects.with_solves(team=team_id, challenge=id)
-    context = {}
-    if user.is_superuser:
-        template = "web/admin_challenge.html"
-        if request.method == "POST":
-            form = AdminChallengeForm(request.POST,  instance=challenge)
-            files = request.FILES.getlist("files")
-            if form.is_valid():
-                new_challenge = form.save(commit=False)
-                if files:
-                    files_zip = create_zip(files)
-                    files_zip.seek(0)
-                    new_challenge.file = InMemoryUploadedFile(files_zip, None, "{}.zip".format(hashlib.sha256(files_zip.read()).hexdigest()), "application/zip", sys.getsizeof(files_zip), charset=None)
-                new_challenge.save()
-        else:
-            form = AdminChallengeForm(instance=challenge)
-        context["form"] = form
-        context["submissions"] = Submission.objects.filter(challenge_id=challenge.id)
-    else:
-        template = "web/challenge.html"
-        if not challenge.active:  # TODO: Rename active => is_active
+@method_decorator(game_decorators, name="dispatch")
+class ChallengesView(View):
+    template_name = "web/challenges.html"
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        categories = Category.objects.all()
+        challenges = Challenge.objects.with_solves(team=user.team_id)
+
+        context = {}
+        context["challenges"] = challenges
+        context["categories"] = categories
+
+        return render(request, self.template_name, context)
+
+
+@method_decorator(game_decorators, name="dispatch")
+class ChallengeView(View):
+    template_name = "web/challenge.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        self.user = request.user
+        self.team_id = self.user.team_id
+        self.challenge_id = kwargs["id"]
+        if not Challenge.objects.filter(pk=self.challenge_id).exists():
             raise Http404
-    context["challenge"] = challenge
-    context["flag_format"] = settings.CTF_FLAG_FORMAT
-    context["solves_procent"] = challenge.solves() * 100
-    if request.method == "POST" and team_id and not challenge.is_solved:
-        if "flag" in request.POST:
-            flag = request.POST["flag"]
-            if challenge.is_flag(flag):
-                solved = Submission(team_id=team_id, challenge=challenge, solved_by=user)
-                solved.save()
-                challenge.is_solved = True
+        self.challenge = Challenge.objects.with_solves(team=self.team_id, challenge=self.challenge_id)
 
-    return render(request, template, context)
+        if not self.challenge.active:
+            raise Http404
+
+        return super(ChallengeView, self).dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        context = {}
+        context["challenge"] = self.challenge
+        context["flag_format"] = settings.CTF_FLAG_FORMAT
+        context["solves_procent"] = self.challenge.solves() * 100
+
+        return render(self.request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        if self.team_id and not self.challenge.is_solved:
+            if "flag" in request.POST:
+                flag = request.POST["flag"]
+                if self.challenge.is_flag(flag):
+                    solved = Submission(team_id=self.team_id, challenge=self.challenge, solved_by=self.user)
+                    solved.save()
+                    self.challenge.is_solved = True
+        else:
+            raise Http404
+        return redirect("challenge", id=self.challenge_id)
+
+
+@method_decorator([admin_required], name="dispatch")
+class AdminCompetitionView(ChallengesView):
+    template_name = "web/admin_competition_list.html"
+
+
+@method_decorator([admin_required], name="dispatch")
+class AdminCategoryCreate(CreateView):
+    model = Category
+    fields = ["name"]
+    template_name = "web/default_form.html"
+    success_url = reverse_lazy("admin-competition")
+
+
+@method_decorator([admin_required], name="dispatch")
+class AdminChallengeCreate(CreateView):
+    model = Challenge
+    fields = "__all__"
+    template_name = "web/default_form.html"
+    success_url = reverse_lazy("admin-competition")
+
+
+@method_decorator([admin_required], name="dispatch")
+class AdminChallengeUpdate(UpdateView):
+    model = Challenge
+    fields = "__all__"
+    template_name = "web/default_form.html"
+    success_url = reverse_lazy("admin-competition")
 
 
 @admin_required
@@ -134,5 +149,3 @@ def scoreboard_json(request):
 def pause_game(request):
     _pause_game()
     return redirect("index")
-
-

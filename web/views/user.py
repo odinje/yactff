@@ -1,4 +1,3 @@
-
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, Http404
 from django.contrib.auth import login
@@ -30,7 +29,7 @@ from web.decorator import (
 
 @anonymous_required
 def signup(request):
-    if not settings.SIGNUP_OPEN: #HACK: quick method of removing singup
+    if not settings.SIGNUP_OPEN:  # HACK: quick method of removing singup
         raise Http404
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
@@ -141,9 +140,10 @@ def user_show(request, id):
 
     return render(request, "web/admin_user.html", {"target_user": user, "form": form})
 
+
 @admin_required
 def export_game_csv(request):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="export.csv"'
     scores = get_scoreboard()
-    return  write_game_csv(response, scores)
+    return write_game_csv(response, scores)

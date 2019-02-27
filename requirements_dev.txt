@@ -1,9 +1,1 @@
-Django==2.0
-mistune==0.8.3
-olefile==0.44
-Pillow==4.3.0
-pytz==2017.3
 django-debug-toolbar==1.9.1
-django-compressor==2.2
-rjsmin==1.0.12
-rcssmin==1.0.6

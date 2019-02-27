@@ -46,9 +46,10 @@ class Challenge(models.Model):  # Maybe change title -> name
     def solves(self):
         submission_count = Submission.objects.filter(challenge=self.id).count()
         team_count = Submission.objects.values("team").distinct().count() 
-        if submission_count == 0 or team_count == 0:
+        if submission_count:
+            return (submission_count / team_count)
+        else:
             return 0
-        return (submission_count / team_count)
 
     def calculate_dynamic_points(self):
         #https://github.com/pwn2winctf/2018/blob/master/nizkctf/scoring.py
@@ -175,9 +176,9 @@ def recalculate_score():
 
 def get_scoreboard():
     #recalculate_score() # Takes time, but ensure correct score
-    scores = Submission.objects.values(team_id=F("team__id"), team_name=F("team__name"))
-    scores = scores.annotate(last_submission=Max("completed"), team_score=Sum("challenge__points"))
-    scores = scores.order_by("-team_score", "last_submission")
+    scores = Submission.objects.values(_id=F("team__id"), name=F("team__name"))
+    scores = scores.annotate(last_submission=Max("completed"), score=Sum("challenge__points"))
+    scores = scores.order_by("-score", "last_submission")
 
     return list(scores)
 

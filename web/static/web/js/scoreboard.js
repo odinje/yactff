@@ -6,8 +6,8 @@ function get_scores() {
       entry = `
         <tr>
           <td scope="row">${i+1}</td>
-          <td><a href="/team/${data[i].team_id}">${data[i].team_name}</a></td>
-          <td>${data[i].team_score}</td>
+          <td><a href="/team/${data[i]._id}">${data[i].name}</a></td>
+          <td>${data[i].score}</td>
         </tr>
       `;
       scoreboard.prepend(entry);

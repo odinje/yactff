@@ -18,7 +18,8 @@ Below is documentation for setting up a development environment for YACTFF.
 ```
 virtualenv -p python3 yactff
 source yactff/bin/activate
-pip install -r requirements_dev.txt
+pip install -r requirements.txt
+pip install -r requirements_dev.txt # Django toolbar 
 python ./manage.py migrate --setting=yactff.settings.development
 python ./manage.py runserver --setting=yactff.settings.development
 ```

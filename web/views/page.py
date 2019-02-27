@@ -5,39 +5,18 @@ from web.models import Page
 from web.forms import AdminPageForm
 from web.decorator import admin_required
 from web.utils import random_string, delete_page_file
+from django.views import View
 
 
-def page(request, path=None):
-    context = {}
-    user = request.user
-    name = path.split("/")[-1] if path else "index"
-    cache_key = "page_{}".format(name)
-    page = cache.get(cache_key)
-    if not page:
-        page = get_object_or_404(Page, name=name)
-        cache.set(cache_key, page)
-    if user.is_superuser:
-        page = get_object_or_404(Page, name=name)  # Need page object for for admin.
-        if request.method == "POST":
-            old_name = page.name
-            old_type = page.type
-            form = AdminPageForm(request.POST, instance=page)
-            if form.is_valid():
-                page = form.save()
-                if old_name != page.name:
-                    delete_page_file(old_name, old_type)
-                    return redirect("page", path=page.name)
-        else:
-            form = AdminPageForm(instance=page)
-        pages = Page.objects.all()
-        template = "web/admin_page.html"
-        context["form"] = form
-        context["pages"] = pages
-    else:
-        template = "web/page.html"
+# https://hackernoon.com/reconciling-djangos-mvc-templates-with-react-components-3aa986cf510a
+# https://medium.com/uva-mobile-devhub/set-up-react-in-your-django-project-with-webpack-4fe1f8455396
+class PageView(View):
+    template = "web/page.html"
 
-    context["page"] = page
-    return render(request, template, context)
+    def get(self, request, *args, **kwargs):
+        page = get_object_or_404(Page, name="index")
+        context = {'page': page}
+        return render(request, self.template, context)
 
 
 @admin_required
