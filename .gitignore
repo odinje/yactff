@@ -23,3 +23,8 @@ web/media/*
 ### External libs ###
 management 
 *user_welcome_email.html 
+
+
+### Node stuff ###
+node_modules/
+package-lock.json

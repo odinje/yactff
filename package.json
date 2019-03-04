@@ -1,0 +1,26 @@
+{
+  "name": "yactff",
+  "version": "1.0.0",
+  "description": "A web framework for Jeoprody style CTF.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/odinje/yactff.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/odinje/yactff/issues"
+  },
+  "homepage": "https://github.com/odinje/yactff#readme",
+  "devDependencies": {
+    "babel": "^6.23.0",
+    "babel-loader": "^8.0.5",
+    "react": "^16.8.3",
+    "webpack": "^4.29.5",
+    "webpack-bundle-tracker": "^0.4.2-beta"
+  }
+}
